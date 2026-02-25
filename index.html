@@ -113,28 +113,36 @@
             runFilters();
         }
 
-        async function refreshData() {
-            const list = document.getElementById('content-list');
-            const status = document.getElementById('status-local');
-            list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">Download in corso...</div>`;
-            status.innerText = "Sincronizzazione...";
-            const cacheBuster = "&t=" + new Date().getTime();
-            const proxy = "https://api.allorigins.win/raw?url=";
-            for (const [name, id] of Object.entries(IDS)) {
-                try {
-                    const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
-                    const res = await fetch(proxy + encodeURIComponent(url));
-                    if (!res.ok) throw new Error();
-                    const json = await res.json();
-                    storage[name] = Array.isArray(json) ? json : [json];
-                } catch (e) { console.error("Errore: " + name); }
-            }
-            localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
-            const timeStr = new Date().toLocaleString();
-            localStorage.setItem('ingros_last_update_v2', timeStr);
-            status.innerText = "Aggiornato: " + timeStr;
-            changeCategory(activeCat);
+    async function refreshData() {
+    const list = document.getElementById('content-list');
+    const status = document.getElementById('status-local');
+    list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Download ultra-rapido...</div>`;
+    
+    const proxy = "https://corsproxy.io/?url=";
+    const cacheBuster = "&t=" + new Date().getTime();
+
+    // Creiamo una lista di "promesse" (download che partono insieme)
+    const downloads = Object.entries(IDS).map(async ([name, id]) => {
+        const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
+        try {
+            const res = await fetch(proxy + encodeURIComponent(url));
+            if (!res.ok) throw new Error();
+            const json = await res.json();
+            storage[name] = Array.isArray(json) ? json : [json];
+        } catch (e) {
+            console.error("Errore download: " + name);
         }
+    });
+
+    // Aspetta che TUTTI i download siano finiti
+    await Promise.all(downloads);
+    
+    localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
+    const timeStr = new Date().toLocaleString();
+    localStorage.setItem('ingros_last_update_v2', timeStr);
+    status.innerText = "Aggiornato: " + timeStr;
+    changeCategory(activeCat);
+    }
 
         function changeCategory(cat) {
             activeCat = cat;
@@ -255,3 +263,4 @@
 </body>
 
 </html>
+
