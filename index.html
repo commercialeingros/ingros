@@ -10,7 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        .filter-select { @apply bg-white border border-gray-300 text-gray-700 text-[11px] rounded-lg block w-full p-2 shadow-sm focus:border-blue-500 outline-none; }
+        /* RIDOTTA DIMENSIONE COMBO: padding p-1 e font più piccolo */
+        .filter-select { @apply bg-white border border-gray-300 text-gray-700 text-[10px] rounded-md block w-full p-1 shadow-sm focus:border-blue-500 outline-none; }
         .nav-active { @apply text-blue-600 border-t-2 border-blue-600 font-bold bg-blue-50; }
         .card-label { @apply text-[9px] text-slate-400 uppercase font-semibold; }
         .card-value { @apply text-slate-900 font-bold text-xs; }
@@ -23,7 +24,6 @@
         <div class="bg-white p-6 rounded-2xl shadow-xl w-80">
             <h2 class="text-sm font-bold mb-4 uppercase">Imposta Numero Invio</h2>
             <input type="tel" id="input-phone" placeholder="Es: 393331234567" class="w-full p-3 border rounded-lg mb-4 text-sm outline-none focus:border-blue-500">
-            <p class="text-[10px] text-slate-500 mb-4 italic text-center">Inserisci il prefisso internazionale (es. 39 per Italia)</p>
             <div class="flex gap-2">
                 <button onclick="closeSettings()" class="flex-1 bg-slate-200 py-2 rounded-lg text-xs font-bold">ANNULLA</button>
                 <button onclick="savePhone()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-xs font-bold shadow-md">SALVA</button>
@@ -32,31 +32,38 @@
     </div>
 
     <header class="bg-white shadow-sm border-b p-3 sticky top-0 z-30">
-        <div class="flex justify-between items-center mb-3">
+        <div class="flex justify-between items-center mb-2">
             <div>
                 <h1 id="header-title" class="text-lg font-bold text-blue-800 uppercase tracking-tight">Copertura</h1>
                 <p id="status-local" class="text-[9px] text-green-600 font-medium italic">Caricamento...</p>
             </div>
             <div class="flex gap-2 items-center">
-                <button onclick="openSettings()" class="bg-slate-100 p-2 rounded-full border">⚙️</button>
-                <button onclick="resetFilters()" class="bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase active:bg-slate-300 shadow-sm">Reset</button>
-                <button onclick="refreshData()" class="bg-blue-600 text-white p-2.5 rounded-full shadow-lg active:scale-90 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button onclick="openSettings()" class="bg-slate-100 p-1.5 rounded-full border">⚙️</button>
+                <button onclick="resetFilters()" class="bg-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[9px] font-bold uppercase active:bg-slate-300">Reset</button>
+                <button onclick="refreshData()" class="bg-blue-600 text-white p-2 rounded-full shadow-lg active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                 </button>
             </div>
         </div>
 
-        <div id="filter-grid" class="grid grid-cols-2 gap-2">
+        <div id="filter-grid" class="grid grid-cols-2 gap-1.5 mb-2">
             <select id="f-unita" class="filter-select" onchange="runFilters()"><option value="">Unità locale</option></select>
             <select id="f-modello" class="filter-select" onchange="runFilters()"><option value="">Modello</option></select>
             <select id="f-isolante" class="filter-select" onchange="runFilters()"><option value="">Isolante</option></select>
+            <select id="f-altezza" class="filter-select" onchange="runFilters()"><option value="">Altezza/Spessore</option></select>
+            
             <select id="f-colore_est" class="filter-select" onchange="runFilters()"><option value="">Colore EST</option></select>
-            <select id="f-altezza" class="filter-select" onchange="runFilters()"><option value="">Altezza</option></select>
+            <select id="f-colore_int" class="filter-select" onchange="runFilters()"><option value="">Colore INT</option></select>
+            
             <select id="f-sp_est" class="filter-select" onchange="runFilters()"><option value="">SP EST</option></select>
             <select id="f-sp_int" class="filter-select" onchange="runFilters()"><option value="">SP INT</option></select>
-            <select id="f-colore_int" class="filter-select" onchange="runFilters()"><option value="">Colore INT</option></select>
+        </div>
+        
+        <div class="flex justify-between items-center px-1 py-1 border-t border-slate-50">
+            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Risultati trovati:</span>
+            <span id="result-count" class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-black">0</span>
         </div>
     </header>
 
@@ -64,16 +71,16 @@
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center pb-6 pt-2 z-40 shadow-inner">
         <button onclick="changeCategory('Copertura')" id="btn-Copertura" class="flex flex-col items-center flex-1 py-1">
-            <span class="text-lg">🏠</span><span class="text-[9px]">COPERTURA</span>
+            <span class="text-base">🏠</span><span class="text-[8px]">COPERTURA</span>
         </button>
         <button onclick="changeCategory('Parete')" id="btn-Parete" class="text-slate-400 flex flex-col items-center flex-1 py-1">
-            <span class="text-lg">🏢</span><span class="text-[9px]">PARETE</span>
+            <span class="text-base">🏢</span><span class="text-[8px]">PARETE</span>
         </button>
         <button onclick="changeCategory('Policarbonati')" id="btn-Policarbonati" class="text-slate-400 flex flex-col items-center flex-1 py-1">
-            <span class="text-lg">💎</span><span class="text-[9px]">POLICARB.</span>
+            <span class="text-base">💎</span><span class="text-[8px]">POLICARB.</span>
         </button>
         <button onclick="changeCategory('Lam Grecate')" id="btn-Grecate" class="text-slate-400 flex flex-col items-center flex-1 py-1">
-            <span class="text-lg">📏</span><span class="text-[9px]">GRECATE</span>
+            <span class="text-base">📏</span><span class="text-[8px]">GRECATE</span>
         </button>
     </nav>
 
@@ -113,8 +120,7 @@
         async function refreshData() {
             const list = document.getElementById('content-list');
             const status = document.getElementById('status-local');
-            list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Sincronizzazione in corso...</div>`;
-            
+            list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Download...</div>`;
             const proxy = "https://corsproxy.io/?url=";
             const cacheBuster = "&t=" + new Date().getTime();
 
@@ -125,19 +131,11 @@
                     if (!res.ok) throw new Error();
                     const json = await res.json();
                     storage[name] = Array.isArray(json) ? json : [json];
-                } catch (e) {
-                    console.error("Errore download: " + name);
-                }
+                } catch (e) { console.error("Errore download: " + name); }
             });
 
             await Promise.all(downloads);
-            
-            try {
-                localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
-            } catch(e) {
-                console.warn("Storage quasi pieno, i dati verranno mantenuti solo in RAM");
-            }
-            
+            try { localStorage.setItem('ingros_data_v2', JSON.stringify(storage)); } catch(e) {}
             const timeStr = new Date().toLocaleString();
             localStorage.setItem('ingros_last_update_v2', timeStr);
             status.innerText = "Aggiornato: " + timeStr;
@@ -151,8 +149,7 @@
             btnIds.forEach(id => document.getElementById(id).className = "text-slate-400 flex flex-col items-center flex-1 py-1");
             let cId = 'btn-' + (cat === 'Lam Grecate' ? 'Grecate' : cat.replace(' ', ''));
             document.getElementById(cId).className = "nav-active flex flex-col items-center flex-1 py-1";
-            resetFilters();
-            fillFilters();
+            fillFilters(); 
         }
 
         function fillFilters() {
@@ -170,15 +167,17 @@
                 } else {
                     select.parentElement.style.display = 'block';
                     const values = [...new Set(data.map(item => String(item[key] || '')))].filter(v => v !== '').sort((a, b) => isNaN(a) || isNaN(b) ? a.localeCompare(b) : parseFloat(a) - parseFloat(b));
-                    const label = select.options[0].text;
+                    const label = select.options[0].getAttribute('data-label') || select.options[0].text;
+                    if(!select.options[0].getAttribute('data-label')) select.options[0].setAttribute('data-label', label);
                     select.innerHTML = `<option value="">${label}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
                 }
             }
+            runFilters();
         }
 
         function sendTo(app, code, model, unit, len) {
             const phone = localStorage.getItem('send_phone_number');
-            if(!phone) { alert("Imposta prima un numero di telefono cliccando sull'icona ⚙️"); return; }
+            if(!phone) { alert("Imposta il numero in ⚙️"); return; }
             const text = `Richiesta Disponibilità:\nCod: ${code}\nModello: ${model}\nLunghezza: ${len}mm\nUnità: ${unit}`;
             const encodedText = encodeURIComponent(text);
             if(app === 'wa') window.open(`https://wa.me/${phone}?text=${encodedText}`);
@@ -187,8 +186,10 @@
 
         function runFilters() {
             const list = document.getElementById('content-list');
+            const countDisplay = document.getElementById('result-count');
             const data = storage[activeCat] || [];
             const isPoli = activeCat === 'Policarbonati';
+            
             const f = {
                 u: document.getElementById('f-unita').value, m: document.getElementById('f-modello').value,
                 i: document.getElementById('f-isolante').value, ce: document.getElementById('f-colore_est').value,
@@ -209,12 +210,12 @@
                        (!f.si || String(item['SP INT'] || '') === f.si);
             });
 
+            countDisplay.innerText = filtered.length;
+
             if (data.length === 0) { list.innerHTML = `<div class="text-center py-20 text-red-400 italic">Dati non caricati.</div>`; return; }
-            if (filtered.length === 0) { list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato trovato</div>`; return; }
+            if (filtered.length === 0) { list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato</div>`; return; }
 
-            // OTTIMIZZAZIONE: Mostriamo solo i primi 100 risultati
             const limitedResults = filtered.slice(0, 100);
-
             let html = limitedResults.map(item => {
                 const lungMm = parseFloat(item['Lunghezza']) || 0;
                 const qta = parseFloat(item['Quantità Disponibile']) || 0;
@@ -258,15 +259,9 @@
                 </div>`;
             }).join('');
 
-            // Messaggio informativo se ci sono più di 100 risultati
             if (filtered.length > 100) {
-                html += `
-                <div class="p-6 text-center">
-                    <p class="text-slate-500 text-xs italic">Mostrati 100 di ${filtered.length} risultati.</p>
-                    <p class="text-blue-600 font-bold text-[10px] uppercase mt-1">Usa i filtri sopra per restringere la ricerca</p>
-                </div>`;
+                html += `<div class="p-6 text-center text-slate-500 text-[10px] italic">Vedi i primi 100 di ${filtered.length} risultati.</div>`;
             }
-
             list.innerHTML = html;
         }
     </script>
