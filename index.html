@@ -92,12 +92,9 @@
             const lastUpd = localStorage.getItem('ingros_last_update_v2');
             if (lastUpd) document.getElementById('status-local').innerText = "Aggiornato: " + lastUpd;
             if (storage['Copertura'].length === 0) refreshData(); else changeCategory(activeCat);
-            
-            // Inizializza numero salvato
             document.getElementById('input-phone').value = localStorage.getItem('send_phone_number') || '';
         };
 
-        // GESTIONE SETTINGS
         function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
         function savePhone() {
@@ -113,36 +110,39 @@
             runFilters();
         }
 
-    async function refreshData() {
-    const list = document.getElementById('content-list');
-    const status = document.getElementById('status-local');
-    list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Download ultra-rapido...</div>`;
-    
-    const proxy = "https://corsproxy.io/?url=";
-    const cacheBuster = "&t=" + new Date().getTime();
+        async function refreshData() {
+            const list = document.getElementById('content-list');
+            const status = document.getElementById('status-local');
+            list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Sincronizzazione in corso...</div>`;
+            
+            const proxy = "https://corsproxy.io/?url=";
+            const cacheBuster = "&t=" + new Date().getTime();
 
-    // Creiamo una lista di "promesse" (download che partono insieme)
-    const downloads = Object.entries(IDS).map(async ([name, id]) => {
-        const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
-        try {
-            const res = await fetch(proxy + encodeURIComponent(url));
-            if (!res.ok) throw new Error();
-            const json = await res.json();
-            storage[name] = Array.isArray(json) ? json : [json];
-        } catch (e) {
-            console.error("Errore download: " + name);
+            const downloads = Object.entries(IDS).map(async ([name, id]) => {
+                const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
+                try {
+                    const res = await fetch(proxy + encodeURIComponent(url));
+                    if (!res.ok) throw new Error();
+                    const json = await res.json();
+                    storage[name] = Array.isArray(json) ? json : [json];
+                } catch (e) {
+                    console.error("Errore download: " + name);
+                }
+            });
+
+            await Promise.all(downloads);
+            
+            try {
+                localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
+            } catch(e) {
+                console.warn("Storage quasi pieno, i dati verranno mantenuti solo in RAM");
+            }
+            
+            const timeStr = new Date().toLocaleString();
+            localStorage.setItem('ingros_last_update_v2', timeStr);
+            status.innerText = "Aggiornato: " + timeStr;
+            changeCategory(activeCat);
         }
-    });
-
-    // Aspetta che TUTTI i download siano finiti
-    await Promise.all(downloads);
-    
-    localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
-    const timeStr = new Date().toLocaleString();
-    localStorage.setItem('ingros_last_update_v2', timeStr);
-    status.innerText = "Aggiornato: " + timeStr;
-    changeCategory(activeCat);
-    }
 
         function changeCategory(cat) {
             activeCat = cat;
@@ -176,14 +176,11 @@
             }
         }
 
-        // FUNZIONE INVIO MESSAGGIO
         function sendTo(app, code, model, unit, len) {
             const phone = localStorage.getItem('send_phone_number');
             if(!phone) { alert("Imposta prima un numero di telefono cliccando sull'icona ⚙️"); return; }
-            
             const text = `Richiesta Disponibilità:\nCod: ${code}\nModello: ${model}\nLunghezza: ${len}mm\nUnità: ${unit}`;
             const encodedText = encodeURIComponent(text);
-            
             if(app === 'wa') window.open(`https://wa.me/${phone}?text=${encodedText}`);
             if(app === 'tg') window.open(`https://t.me/+${phone}?text=${encodedText}`);
         }
@@ -198,6 +195,7 @@
                 ci: document.getElementById('f-colore_int').value, a: document.getElementById('f-altezza').value,
                 se: document.getElementById('f-sp_est').value, si: document.getElementById('f-sp_int').value
             };
+
             const filtered = data.filter(item => {
                 const k_col = isPoli ? 'Colore' : 'Colore EST';
                 const k_alt = isPoli ? 'Spessore' : 'Altezza';
@@ -210,10 +208,14 @@
                        (!f.se || String(item['SP EST'] || '') === f.se) &&
                        (!f.si || String(item['SP INT'] || '') === f.si);
             });
+
             if (data.length === 0) { list.innerHTML = `<div class="text-center py-20 text-red-400 italic">Dati non caricati.</div>`; return; }
             if (filtered.length === 0) { list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato trovato</div>`; return; }
 
-            list.innerHTML = filtered.map(item => {
+            // OTTIMIZZAZIONE: Mostriamo solo i primi 100 risultati
+            const limitedResults = filtered.slice(0, 100);
+
+            let html = limitedResults.map(item => {
                 const lungMm = parseFloat(item['Lunghezza']) || 0;
                 const qta = parseFloat(item['Quantità Disponibile']) || 0;
                 const model = (item['Modello'] || '').replace(/'/g, "");
@@ -231,7 +233,6 @@
                              <span class="text-[9px] text-blue-600 font-mono font-bold ml-1">${code}</span>
                         </div>
                     </div>
-                    
                     <div class="flex justify-between items-end mb-3">
                         <h3 class="text-[11px] font-bold text-slate-700 leading-tight w-2/3">${item['Modello']}</h3>
                         <div class="text-right leading-none">
@@ -239,13 +240,11 @@
                             <span class="text-[9px] text-slate-400 uppercase font-bold ml-0.5">${item['UM'] || 'MQ'}</span>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-lg mb-3 text-center">
                         <div><p class="card-label">Lunghezza</p><p class="card-value">${lungMm} mm</p></div>
                         <div><p class="card-label">Pezzi</p><p class="card-value">${pezzi}</p></div>
                         <div><p class="card-label">Isolante</p><p class="card-value">${item['Isolante'] || '-'}</p></div>
                     </div>
-
                     <div class="grid grid-cols-2 gap-x-4 gap-y-2 px-1">
                         ${isPoli ? `
                             <div><p class="card-label">Colore</p><p class="card-value">${item['Colore'] || '-'}</p></div>
@@ -258,9 +257,19 @@
                     </div>
                 </div>`;
             }).join('');
+
+            // Messaggio informativo se ci sono più di 100 risultati
+            if (filtered.length > 100) {
+                html += `
+                <div class="p-6 text-center">
+                    <p class="text-slate-500 text-xs italic">Mostrati 100 di ${filtered.length} risultati.</p>
+                    <p class="text-blue-600 font-bold text-[10px] uppercase mt-1">Usa i filtri sopra per restringere la ricerca</p>
+                </div>`;
+            }
+
+            list.innerHTML = html;
         }
     </script>
 </body>
-
 </html>
 
