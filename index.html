@@ -86,10 +86,10 @@
 
     <script>
         const IDS = {
-            'Copertura': '1o8sdYnwdlS57Jny1yhp3EZm7FcXJThRN',
-            'Parete': '1p-lN2k9rCQcItxMCKIeZ25Y6N8jdtMuE',
-            'Policarbonati': '1rnnjXvQHdPTTomnenLdKjuTl74g8EfC8',
-            'Lam Grecate': '11tN9xbvLM8g2x9BD3-T_PnrAZFe7GLyn'
+            'Copertura': '1drzDqUXJfOs2zMdjTCd4p3f0RbZwup3S',
+            'Parete': '1kvVU90H4u_0MPIJKRluWMCMwZAMaxmDt',
+            'Policarbonati': '1BrGcuaCWWxzwUtRyjdxbU-v7TePEzDQT',
+            'Lam Grecate': '1ePdTLugejG1fgJl6jI6e_Tp63VsHyTo6'
         };
 
         let storage = JSON.parse(localStorage.getItem('ingros_data_v2')) || { 'Copertura': [], 'Parete': [], 'Policarbonati': [], 'Lam Grecate': [] };
@@ -117,29 +117,40 @@
             runFilters();
         }
 
+       
         async function refreshData() {
-            const list = document.getElementById('content-list');
-            const status = document.getElementById('status-local');
-            list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Download...</div>`;
-            const proxy = "https://corsproxy.io/?url=";
-            const cacheBuster = "&t=" + new Date().getTime();
+    const list = document.getElementById('content-list');
+    const status = document.getElementById('status-local');
+    list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse">⚡ SINCRONIZZAZIONE DIRETTA...</div>`;
+    
+    // Incolla qui il tuo URL della Web App
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbyYTCXTVEKxIFXOmVGSmILfwhJTIlFWxgYdNphSu9f_C_p2VrsF3IgN-u7y4HdNvPZ6OQ/exec";
 
-            const downloads = Object.entries(IDS).map(async ([name, id]) => {
-                const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
-                try {
-                    const res = await fetch(proxy + encodeURIComponent(url));
-                    if (!res.ok) throw new Error();
-                    const json = await res.json();
-                    storage[name] = Array.isArray(json) ? json : [json];
-                } catch (e) { console.error("Errore download: " + name); }
+    for (const name of Object.keys(IDS)) {
+        try {
+            // Rimuoviamo il proxy e chiamiamo la Web App
+            const catParam = name.replace('Lam ', ''); 
+            // Modifica la chiamata fetch aggiungendo l'oggetto di configurazione
+            const response = await fetch(`${webAppUrl}?cat=${catParam}`, {
+                method: 'GET',
+                redirect: 'follow' // Forza il browser a seguire i reindirizzamenti di Google
             });
+            
+            if (!response.ok) throw new Error();
+            
+            const jsonData = await response.json();
+            storage[name] = jsonData;
+            console.log(`Caricato ${name}: ${jsonData.length} record`);
+        } catch (e) {
+            console.error("Errore download: " + name);
+        }
+    }
 
-            await Promise.all(downloads);
-            try { localStorage.setItem('ingros_data_v2', JSON.stringify(storage)); } catch(e) {}
-            const timeStr = new Date().toLocaleString();
-            localStorage.setItem('ingros_last_update_v2', timeStr);
-            status.innerText = "Aggiornato: " + timeStr;
-            changeCategory(activeCat);
+    localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
+    const timeStr = new Date().toLocaleString();
+    localStorage.setItem('ingros_last_update_v2', timeStr);
+    status.innerText = "Aggiornato: " + timeStr;
+    changeCategory(activeCat);
         }
 
         function changeCategory(cat) {
