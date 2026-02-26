@@ -10,7 +10,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        /* RIDOTTA DIMENSIONE COMBO: padding p-1 e font più piccolo */
         .filter-select { @apply bg-white border border-gray-300 text-gray-700 text-[10px] rounded-md block w-full p-1 shadow-sm focus:border-blue-500 outline-none; }
         .nav-active { @apply text-blue-600 border-t-2 border-blue-600 font-bold bg-blue-50; }
         .card-label { @apply text-[9px] text-slate-400 uppercase font-semibold; }
@@ -49,17 +48,7 @@
         </div>
 
         <div id="filter-grid" class="grid grid-cols-2 gap-1.5 mb-2">
-            <select id="f-unita" class="filter-select" onchange="runFilters()"><option value="">Unità locale</option></select>
-            <select id="f-modello" class="filter-select" onchange="runFilters()"><option value="">Modello</option></select>
-            <select id="f-isolante" class="filter-select" onchange="runFilters()"><option value="">Isolante</option></select>
-            <select id="f-altezza" class="filter-select" onchange="runFilters()"><option value="">Altezza/Spessore</option></select>
-            
-            <select id="f-colore_est" class="filter-select" onchange="runFilters()"><option value="">Colore EST</option></select>
-            <select id="f-colore_int" class="filter-select" onchange="runFilters()"><option value="">Colore INT</option></select>
-            
-            <select id="f-sp_est" class="filter-select" onchange="runFilters()"><option value="">SP EST</option></select>
-            <select id="f-sp_int" class="filter-select" onchange="runFilters()"><option value="">SP INT</option></select>
-        </div>
+            </div>
         
         <div class="flex justify-between items-center px-1 py-1 border-t border-slate-50">
             <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Risultati trovati:</span>
@@ -70,16 +59,16 @@
     <main id="content-list" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24"></main>
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center pb-6 pt-2 z-40 shadow-inner">
-        <button onclick="changeCategory('Copertura')" id="btn-Copertura" class="flex flex-col items-center flex-1 py-1">
+        <button onclick="changeCategory('Copertura')" id="btn-Copertura" class="flex flex-col items-center flex-1 py-1 text-slate-400">
             <span class="text-base">🏠</span><span class="text-[8px]">COPERTURA</span>
         </button>
-        <button onclick="changeCategory('Parete')" id="btn-Parete" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+        <button onclick="changeCategory('Parete')" id="btn-Parete" class="flex flex-col items-center flex-1 py-1 text-slate-400">
             <span class="text-base">🏢</span><span class="text-[8px]">PARETE</span>
         </button>
-        <button onclick="changeCategory('Policarbonati')" id="btn-Policarbonati" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+        <button onclick="changeCategory('Policarbonati')" id="btn-Policarbonati" class="flex flex-col items-center flex-1 py-1 text-slate-400">
             <span class="text-base">💎</span><span class="text-[8px]">POLICARB.</span>
         </button>
-        <button onclick="changeCategory('Lam Grecate')" id="btn-Grecate" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+        <button onclick="changeCategory('Lam Grecate')" id="btn-Grecate" class="flex flex-col items-center flex-1 py-1 text-slate-400">
             <span class="text-base">📏</span><span class="text-[8px]">GRECATE</span>
         </button>
     </nav>
@@ -90,6 +79,14 @@
             'Parete': '1p-lN2k9rCQcItxMCKIeZ25Y6N8jdtMuE',
             'Policarbonati': '1rnnjXvQHdPTTomnenLdKjuTl74g8EfC8',
             'Lam Grecate': '11tN9xbvLM8g2x9BD3-T_PnrAZFe7GLyn'
+        };
+
+        // Mappatura Filtri richiesta
+        const FILTER_CONFIG = {
+            'Copertura': ['Unità locale', 'Modello', 'Isolante', 'Altezza', 'Colore EST', 'Colore INT', 'SP EST', 'SP INT'],
+            'Parete': ['Unità locale', 'Modello', 'Isolante', 'Altezza', 'Colore EST', 'Colore INT', 'SP EST', 'SP INT'],
+            'Policarbonati': ['Unità locale', 'Modello', 'Modulo', 'Spessore', 'Colore'],
+            'Lam Grecate': ['Unità locale', 'Modello', 'Tipo Materiale', 'Colore']
         };
 
         let storage = JSON.parse(localStorage.getItem('ingros_data_v2')) || { 'Copertura': [], 'Parete': [], 'Policarbonati': [], 'Lam Grecate': [] };
@@ -111,15 +108,8 @@
             runFilters();
         }
 
-        function resetFilters() {
-            const filterIds = ['f-unita', 'f-modello', 'f-isolante', 'f-colore_est', 'f-altezza', 'f-sp_est', 'f-sp_int', 'f-colore_int'];
-            filterIds.forEach(id => { document.getElementById(id).value = ""; });
-            runFilters();
-        }
-
         async function refreshData() {
             const list = document.getElementById('content-list');
-            const status = document.getElementById('status-local');
             list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse uppercase">⚡ Download...</div>`;
             const proxy = "https://corsproxy.io/?url=";
             const cacheBuster = "&t=" + new Date().getTime();
@@ -128,50 +118,54 @@
                 const url = `https://docs.google.com/uc?export=download&id=${id}${cacheBuster}`;
                 try {
                     const res = await fetch(proxy + encodeURIComponent(url));
-                    if (!res.ok) throw new Error();
                     const json = await res.json();
                     storage[name] = Array.isArray(json) ? json : [json];
-                } catch (e) { console.error("Errore download: " + name); }
+                } catch (e) { console.error("Errore: " + name); }
             });
 
             await Promise.all(downloads);
-            try { localStorage.setItem('ingros_data_v2', JSON.stringify(storage)); } catch(e) {}
+            localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
             const timeStr = new Date().toLocaleString();
             localStorage.setItem('ingros_last_update_v2', timeStr);
-            status.innerText = "Aggiornato: " + timeStr;
+            document.getElementById('status-local').innerText = "Aggiornato: " + timeStr;
             changeCategory(activeCat);
         }
 
         function changeCategory(cat) {
             activeCat = cat;
             document.getElementById('header-title').innerText = cat;
-            const btnIds = ['btn-Copertura', 'btn-Parete', 'btn-Policarbonati', 'btn-Grecate'];
-            btnIds.forEach(id => document.getElementById(id).className = "text-slate-400 flex flex-col items-center flex-1 py-1");
+            
+            // Gestione Navigazione
+            document.querySelectorAll('nav button').forEach(btn => btn.className = "flex flex-col items-center flex-1 py-1 text-slate-400");
             let cId = 'btn-' + (cat === 'Lam Grecate' ? 'Grecate' : cat.replace(' ', ''));
-            document.getElementById(cId).className = "nav-active flex flex-col items-center flex-1 py-1";
-            fillFilters(); 
+            const activeBtn = document.getElementById(cId);
+            if(activeBtn) activeBtn.className = "nav-active flex flex-col items-center flex-1 py-1";
+            
+            renderFilterGrid();
         }
 
-        function fillFilters() {
+        function renderFilterGrid() {
+            const grid = document.getElementById('filter-grid');
+            const fields = FILTER_CONFIG[activeCat];
             const data = storage[activeCat] || [];
-            const isPoli = activeCat === 'Policarbonati';
-            const mapping = {
-                'f-unita': 'Unità locale', 'f-modello': 'Modello', 'f-isolante': 'Isolante',
-                'f-colore_est': isPoli ? 'Colore' : 'Colore EST', 'f-colore_int': 'Colore INT',
-                'f-altezza': isPoli ? 'Spessore' : 'Altezza', 'f-sp_est': 'SP EST', 'f-sp_int': 'SP INT'
-            };
-            for (let [id, key] of Object.entries(mapping)) {
-                const select = document.getElementById(id);
-                if(isPoli && (key === 'SP EST' || key === 'SP INT' || key === 'Isolante' || key === 'Colore INT')) {
-                    select.parentElement.style.display = 'none';
-                } else {
-                    select.parentElement.style.display = 'block';
-                    const values = [...new Set(data.map(item => String(item[key] || '')))].filter(v => v !== '').sort((a, b) => isNaN(a) || isNaN(b) ? a.localeCompare(b) : parseFloat(a) - parseFloat(b));
-                    const label = select.options[0].getAttribute('data-label') || select.options[0].text;
-                    if(!select.options[0].getAttribute('data-label')) select.options[0].setAttribute('data-label', label);
-                    select.innerHTML = `<option value="">${label}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
-                }
-            }
+            
+            grid.innerHTML = fields.map(field => {
+                const values = [...new Set(data.map(item => item[field] ? String(item[field]) : ''))]
+                                .filter(v => v !== '')
+                                .sort((a, b) => isNaN(a) || isNaN(b) ? a.localeCompare(b) : parseFloat(a) - parseFloat(b));
+                
+                return `
+                <select id="f-${field.replace(/\s+/g, '_')}" data-field="${field}" class="filter-select" onchange="runFilters()">
+                    <option value="">${field}</option>
+                    ${values.map(v => `<option value="${v}">${v}</option>`).join('')}
+                </select>`;
+            }).join('');
+
+            runFilters();
+        }
+
+        function resetFilters() {
+            document.querySelectorAll('.filter-select').forEach(s => s.value = "");
             runFilters();
         }
 
@@ -188,35 +182,30 @@
             const list = document.getElementById('content-list');
             const countDisplay = document.getElementById('result-count');
             const data = storage[activeCat] || [];
-            const isPoli = activeCat === 'Policarbonati';
             
-            const f = {
-                u: document.getElementById('f-unita').value, m: document.getElementById('f-modello').value,
-                i: document.getElementById('f-isolante').value, ce: document.getElementById('f-colore_est').value,
-                ci: document.getElementById('f-colore_int').value, a: document.getElementById('f-altezza').value,
-                se: document.getElementById('f-sp_est').value, si: document.getElementById('f-sp_int').value
-            };
+            // Legge tutti i filtri attivi
+            const activeFilters = Array.from(document.querySelectorAll('.filter-select')).map(s => ({
+                field: s.getAttribute('data-field'),
+                value: s.value
+            }));
 
             const filtered = data.filter(item => {
-                const k_col = isPoli ? 'Colore' : 'Colore EST';
-                const k_alt = isPoli ? 'Spessore' : 'Altezza';
-                return (!f.u || String(item['Unità locale'] || '') === f.u) &&
-                       (!f.m || String(item['Modello'] || '') === f.m) &&
-                       (!f.i || String(item['Isolante'] || '') === f.i) &&
-                       (!f.ce || String(item[k_col] || '') === f.ce) &&
-                       (!f.ci || String(item['Colore INT'] || '') === f.ci) &&
-                       (!f.a || String(item[k_alt] || '') === f.a) &&
-                       (!f.se || String(item['SP EST'] || '') === f.se) &&
-                       (!f.si || String(item['SP INT'] || '') === f.si);
+                return activeFilters.every(f => !f.value || String(item[f.field] || '') === f.value);
             });
 
             countDisplay.innerText = filtered.length;
 
-            if (data.length === 0) { list.innerHTML = `<div class="text-center py-20 text-red-400 italic">Dati non caricati.</div>`; return; }
-            if (filtered.length === 0) { list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato</div>`; return; }
+            if (data.length === 0) {
+                list.innerHTML = `<div class="text-center py-20 text-red-400 italic font-bold">CARICARE DATI...</div>`;
+                return;
+            }
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato trovato</div>`;
+                return;
+            }
 
             const limitedResults = filtered.slice(0, 100);
-            let html = limitedResults.map(item => {
+            list.innerHTML = limitedResults.map(item => {
                 const lungMm = parseFloat(item['Lunghezza']) || 0;
                 const qta = parseFloat(item['Quantità Disponibile']) || 0;
                 const model = (item['Modello'] || '').replace(/'/g, "");
@@ -229,16 +218,16 @@
                     <div class="flex justify-between items-start mb-1">
                         <span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold uppercase">${unit}</span>
                         <div class="flex gap-2">
-                             <button onclick="sendTo('wa','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-green-600 font-bold border-b border-green-200">WA</button>
-                             <button onclick="sendTo('tg','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-blue-500 font-bold border-b border-blue-200">TG</button>
-                             <span class="text-[9px] text-blue-600 font-mono font-bold ml-1">${code}</span>
+                             <button onclick="sendTo('wa','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-green-600 font-bold">WA</button>
+                             <button onclick="sendTo('tg','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-blue-500 font-bold">TG</button>
+                             <span class="text-[9px] text-blue-600 font-mono font-bold">${code}</span>
                         </div>
                     </div>
                     <div class="flex justify-between items-end mb-3">
                         <h3 class="text-[11px] font-bold text-slate-700 leading-tight w-2/3">${item['Modello']}</h3>
                         <div class="text-right leading-none">
                             <span class="text-lg font-black text-blue-900">${qta}</span>
-                            <span class="text-[9px] text-slate-400 uppercase font-bold ml-0.5">${item['UM'] || 'MQ'}</span>
+                            <span class="text-[9px] text-slate-400 uppercase font-bold">${item['UM'] || 'MQ'}</span>
                         </div>
                     </div>
                     <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-lg mb-3 text-center">
@@ -247,22 +236,11 @@
                         <div><p class="card-label">Isolante</p><p class="card-value">${item['Isolante'] || '-'}</p></div>
                     </div>
                     <div class="grid grid-cols-2 gap-x-4 gap-y-2 px-1">
-                        ${isPoli ? `
-                            <div><p class="card-label">Colore</p><p class="card-value">${item['Colore'] || '-'}</p></div>
-                            <div><p class="card-label text-right">Spessore</p><p class="card-value text-right">${item['Spessore'] || '-'}</p></div>
-                        ` : `
-                            <div><p class="card-label">SP EST/INT</p><p class="card-value">${item['SP EST'] ? item['SP EST'].replace('SP. ','') : '0'}/${item['SP INT'] ? item['SP INT'].replace('SP. ','') : '0'}</p></div>
-                            <div><p class="card-label text-right">Altezza</p><p class="card-value text-right">${item['Altezza'] || '-'}</p></div>
-                            <div class="col-span-2"><p class="card-label">Colore EST/INT</p><p class="card-value text-[10px] leading-tight">${item['Colore EST'] || '-'} / ${item['Colore INT'] || '-'}</p></div>
-                        `}
+                        <div><p class="card-label">Specifiche</p><p class="card-value">${item['Altezza'] || item['Spessore'] || '-'} / ${item['Tipo Materiale'] || item['Modulo'] || '-'}</p></div>
+                        <div><p class="card-label text-right">Colore</p><p class="card-value text-right">${item['Colore'] || item['Colore EST'] || '-'}</p></div>
                     </div>
                 </div>`;
             }).join('');
-
-            if (filtered.length > 100) {
-                html += `<div class="p-6 text-center text-slate-500 text-[10px] italic">Vedi i primi 100 di ${filtered.length} risultati.</div>`;
-            }
-            list.innerHTML = html;
         }
     </script>
 </body>
