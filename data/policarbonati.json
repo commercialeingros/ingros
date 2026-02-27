@@ -6192,22 +6192,6 @@
         "Lunghezza":  2460
     },
     {
-        "Articolo":  "PCCGETRA000003",
-        "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA . MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
-        "Unita_locale":  "Marene",
-        "UM_1":  "MQ",
-        "Quantita_1":  20.2,
-        "UM_2":  "PZ",
-        "Quantita_2":  4,
-        "Modello":  "LASTRA POL. COMPATTO GREC. MULTYSILMA",
-        "Extramodello":  ".",
-        "Modulo":  "MODULO A LASTRA COMP",
-        "Spessore":  "SP. 1 MM",
-        "Colore":  "NEUTRO",
-        "ProtezioneUV":  "PROTEZIONE",
-        "Lunghezza":  5000
-    },
-    {
         "Articolo":  "PCCGETRA000004",
         "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA . MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
         "Unita_locale":  "Marene",
@@ -6244,9 +6228,9 @@
         "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA . MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
         "Unita_locale":  "Marene",
         "UM_1":  "MQ",
-        "Quantita_1":  157.56,
+        "Quantita_1":  96.96,
         "UM_2":  "PZ",
-        "Quantita_2":  26,
+        "Quantita_2":  16,
         "Modello":  "LASTRA POL. COMPATTO GREC. MULTYSILMA",
         "Extramodello":  ".",
         "Modulo":  "MODULO A LASTRA COMP",
@@ -6256,20 +6240,20 @@
         "Lunghezza":  6000
     },
     {
-        "Articolo":  "PCCGETRA000008",
-        "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA . MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
+        "Articolo":  "PCCGETRA000014",
+        "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
         "Unita_locale":  "Marene",
         "UM_1":  "MQ",
-        "Quantita_1":  193.92,
+        "Quantita_1":  254.52,
         "UM_2":  "PZ",
-        "Quantita_2":  24,
+        "Quantita_2":  148,
         "Modello":  "LASTRA POL. COMPATTO GREC. MULTYSILMA",
         "Extramodello":  ".",
         "Modulo":  "MODULO A LASTRA COMP",
         "Spessore":  "SP. 1 MM",
         "Colore":  "NEUTRO",
         "ProtezioneUV":  "PROTEZIONE",
-        "Lunghezza":  8000
+        "Lunghezza":  1600
     },
     {
         "Articolo":  "PCCGETRA000016",
@@ -6286,6 +6270,22 @@
         "Colore":  "NEUTRO",
         "ProtezioneUV":  "PROTEZIONE",
         "Lunghezza":  3000
+    },
+    {
+        "Articolo":  "PCCGETRA000021",
+        "Descrizione":  "LASTRA POL. COMPATTO GREC. MULTYSILMA MODULO A LASTRA COMPATTA SP. 1 MM NEUTRO P. 1010 MM P. UTILE 900 MM",
+        "Unita_locale":  "Marene",
+        "UM_1":  "MQ",
+        "Quantita_1":  20.2,
+        "UM_2":  "PZ",
+        "Quantita_2":  12,
+        "Modello":  "LASTRA POL. COMPATTO GREC. MULTYSILMA",
+        "Extramodello":  ".",
+        "Modulo":  "MODULO A LASTRA COMP",
+        "Spessore":  "SP. 1 MM",
+        "Colore":  "NEUTRO",
+        "ProtezioneUV":  "PROTEZIONE",
+        "Lunghezza":  1666
     },
     {
         "Articolo":  "PCCOM2SCELTA",
