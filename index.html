@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Giacenze Ingros</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Ingros App">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { -webkit-tap-highlight-color: transparent; }
+        /* RIDOTTA DIMENSIONE COMBO: padding p-1 e font più piccolo */
+        .filter-select { @apply bg-white border border-gray-300 text-gray-700 text-[10px] rounded-md block w-full p-1 shadow-sm focus:border-blue-500 outline-none; }
+        .nav-active { @apply text-blue-600 border-t-2 border-blue-600 font-bold bg-blue-50; }
+        .card-label { @apply text-[9px] text-slate-400 uppercase font-semibold; }
+        .card-value { @apply text-slate-900 font-bold text-xs; }
+        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-slate-100 h-screen flex flex-col overflow-hidden text-slate-900">
+
+    <div id="settingsModal" class="modal items-center justify-center">
+        <div class="bg-white p-6 rounded-2xl shadow-xl w-80">
+            <h2 class="text-sm font-bold mb-4 uppercase">Imposta Numero Invio</h2>
+            <input type="tel" id="input-phone" placeholder="Es: 393331234567" class="w-full p-3 border rounded-lg mb-4 text-sm outline-none focus:border-blue-500">
+            <div class="flex gap-2">
+                <button onclick="closeSettings()" class="flex-1 bg-slate-200 py-2 rounded-lg text-xs font-bold">ANNULLA</button>
+                <button onclick="savePhone()" class="flex-1 bg-blue-600 text-white py-2 rounded-lg text-xs font-bold shadow-md">SALVA</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="bg-white shadow-sm border-b p-3 sticky top-0 z-30">
+        <div class="flex justify-between items-center mb-2">
+            <div>
+                <h1 id="header-title" class="text-lg font-bold text-blue-800 uppercase tracking-tight">Copertura</h1>
+                <p id="status-local" class="text-[9px] text-green-600 font-medium italic">Caricamento...</p>
+            </div>
+            <div class="flex gap-2 items-center">
+                <button onclick="openSettings()" class="bg-slate-100 p-1.5 rounded-full border">⚙️</button>
+                <button onclick="resetFilters()" class="bg-slate-200 text-slate-600 px-2 py-1 rounded-lg text-[9px] font-bold uppercase active:bg-slate-300">Reset</button>
+                <button onclick="refreshData()" class="bg-blue-600 text-white p-2 rounded-full shadow-lg active:scale-90">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div id="filter-grid" class="grid grid-cols-2 gap-1.5 mb-2">
+            <select id="f-unita" class="filter-select" onchange="runFilters()"><option value="">Unità locale</option></select>
+            <select id="f-modello" class="filter-select" onchange="runFilters()"><option value="">Modello</option></select>
+            <select id="f-isolante" class="filter-select" onchange="runFilters()"><option value="">Isolante</option></select>
+            <select id="f-altezza" class="filter-select" onchange="runFilters()"><option value="">Altezza/Spessore</option></select>
+            
+            <select id="f-colore_est" class="filter-select" onchange="runFilters()"><option value="">Colore EST</option></select>
+            <select id="f-colore_int" class="filter-select" onchange="runFilters()"><option value="">Colore INT</option></select>
+            
+            <select id="f-sp_est" class="filter-select" onchange="runFilters()"><option value="">SP EST</option></select>
+            <select id="f-sp_int" class="filter-select" onchange="runFilters()"><option value="">SP INT</option></select>
+        </div>
+        
+        <div class="flex justify-between items-center px-1 py-1 border-t border-slate-50">
+            <span class="text-[9px] text-slate-500 font-bold uppercase tracking-wider">Risultati trovati:</span>
+            <span id="result-count" class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full font-black">0</span>
+        </div>
+    </header>
+
+    <main id="content-list" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24"></main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around items-center pb-6 pt-2 z-40 shadow-inner">
+        <button onclick="changeCategory('Copertura')" id="btn-Copertura" class="flex flex-col items-center flex-1 py-1">
+            <span class="text-base">🏠</span><span class="text-[8px]">COPERTURA</span>
+        </button>
+        <button onclick="changeCategory('Parete')" id="btn-Parete" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+            <span class="text-base">🏢</span><span class="text-[8px]">PARETE</span>
+        </button>
+        <button onclick="changeCategory('Policarbonati')" id="btn-Policarbonati" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+            <span class="text-base">💎</span><span class="text-[8px]">POLICARB.</span>
+        </button>
+        <button onclick="changeCategory('Lam Grecate')" id="btn-Grecate" class="text-slate-400 flex flex-col items-center flex-1 py-1">
+            <span class="text-base">📏</span><span class="text-[8px]">GRECATE</span>
+        </button>
+    </nav>
+
+    <script>
+        const IDS = {
+            'Copertura': '1drzDqUXJfOs2zMdjTCd4p3f0RbZwup3S',
+            'Parete': '1kvVU90H4u_0MPIJKRluWMCMwZAMaxmDt',
+            'Policarbonati': '1BrGcuaCWWxzwUtRyjdxbU-v7TePEzDQT',
+            'Lam Grecate': '1ePdTLugejG1fgJl6jI6e_Tp63VsHyTo6'
+        };
+
+        let storage = JSON.parse(localStorage.getItem('ingros_data_v2')) || { 'Copertura': [], 'Parete': [], 'Policarbonati': [], 'Lam Grecate': [] };
+        let activeCat = 'Copertura';
+
+        window.onload = () => {
+            const lastUpd = localStorage.getItem('ingros_last_update_v2');
+            if (lastUpd) document.getElementById('status-local').innerText = "Aggiornato: " + lastUpd;
+            if (storage['Copertura'].length === 0) refreshData(); else changeCategory(activeCat);
+            document.getElementById('input-phone').value = localStorage.getItem('send_phone_number') || '';
+        };
+
+        function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+        function savePhone() {
+            const phone = document.getElementById('input-phone').value;
+            localStorage.setItem('send_phone_number', phone);
+            closeSettings();
+            runFilters();
+        }
+
+        function resetFilters() {
+            const filterIds = ['f-unita', 'f-modello', 'f-isolante', 'f-colore_est', 'f-altezza', 'f-sp_est', 'f-sp_int', 'f-colore_int'];
+            filterIds.forEach(id => { document.getElementById(id).value = ""; });
+            runFilters();
+        }
+
+       
+        async function refreshData() {
+    const list = document.getElementById('content-list');
+    const status = document.getElementById('status-local');
+    list.innerHTML = `<div class="text-center py-20 text-blue-600 font-bold animate-pulse">⚡ SINCRONIZZAZIONE DIRETTA...</div>`;
+    
+    // Incolla qui il tuo URL della Web App
+    const webAppUrl = https://script.google.com/macros/s/AKfycbyYTCXTVEKxIFXOmVGSmILfwhJTIlFWxgYdNphSu9f_C_p2VrsF3IgN-u7y4HdNvPZ6OQ/exec;
+
+    for (const name of Object.keys(IDS)) {
+        try {
+            // Rimuoviamo il proxy e chiamiamo la Web App
+            const catParam = name.replace('Lam ', ''); 
+            // Modifica la chiamata fetch aggiungendo l'oggetto di configurazione
+            const response = await fetch(`${webAppUrl}?cat=${catParam}`, {
+                method: 'GET',
+                redirect: 'follow' // Forza il browser a seguire i reindirizzamenti di Google
+            });
+            
+            if (!response.ok) throw new Error();
+            
+            const jsonData = await response.json();
+            storage[name] = jsonData;
+            console.log(`Caricato ${name}: ${jsonData.length} record`);
+        } catch (e) {
+            console.error("Errore download: " + name);
+        }
+    }
+
+    localStorage.setItem('ingros_data_v2', JSON.stringify(storage));
+    const timeStr = new Date().toLocaleString();
+    localStorage.setItem('ingros_last_update_v2', timeStr);
+    status.innerText = "Aggiornato: " + timeStr;
+    changeCategory(activeCat);
+        }
+
+        function changeCategory(cat) {
+            activeCat = cat;
+            document.getElementById('header-title').innerText = cat;
+            const btnIds = ['btn-Copertura', 'btn-Parete', 'btn-Policarbonati', 'btn-Grecate'];
+            btnIds.forEach(id => document.getElementById(id).className = "text-slate-400 flex flex-col items-center flex-1 py-1");
+            let cId = 'btn-' + (cat === 'Lam Grecate' ? 'Grecate' : cat.replace(' ', ''));
+            document.getElementById(cId).className = "nav-active flex flex-col items-center flex-1 py-1";
+            fillFilters(); 
+        }
+
+        function fillFilters() {
+            const data = storage[activeCat] || [];
+            const isPoli = activeCat === 'Policarbonati';
+            const mapping = {
+                'f-unita': 'Unità locale', 'f-modello': 'Modello', 'f-isolante': 'Isolante',
+                'f-colore_est': isPoli ? 'Colore' : 'Colore EST', 'f-colore_int': 'Colore INT',
+                'f-altezza': isPoli ? 'Spessore' : 'Altezza', 'f-sp_est': 'SP EST', 'f-sp_int': 'SP INT'
+            };
+            for (let [id, key] of Object.entries(mapping)) {
+                const select = document.getElementById(id);
+                if(isPoli && (key === 'SP EST' || key === 'SP INT' || key === 'Isolante' || key === 'Colore INT')) {
+                    select.parentElement.style.display = 'none';
+                } else {
+                    select.parentElement.style.display = 'block';
+                    const values = [...new Set(data.map(item => String(item[key] || '')))].filter(v => v !== '').sort((a, b) => isNaN(a) || isNaN(b) ? a.localeCompare(b) : parseFloat(a) - parseFloat(b));
+                    const label = select.options[0].getAttribute('data-label') || select.options[0].text;
+                    if(!select.options[0].getAttribute('data-label')) select.options[0].setAttribute('data-label', label);
+                    select.innerHTML = `<option value="">${label}</option>` + values.map(v => `<option value="${v}">${v}</option>`).join('');
+                }
+            }
+            runFilters();
+        }
+
+        function sendTo(app, code, model, unit, len) {
+            const phone = localStorage.getItem('send_phone_number');
+            if(!phone) { alert("Imposta il numero in ⚙️"); return; }
+            const text = `Richiesta Disponibilità:\nCod: ${code}\nModello: ${model}\nLunghezza: ${len}mm\nUnità: ${unit}`;
+            const encodedText = encodeURIComponent(text);
+            if(app === 'wa') window.open(`https://wa.me/${phone}?text=${encodedText}`);
+            if(app === 'tg') window.open(`https://t.me/+${phone}?text=${encodedText}`);
+        }
+
+        function runFilters() {
+            const list = document.getElementById('content-list');
+            const countDisplay = document.getElementById('result-count');
+            const data = storage[activeCat] || [];
+            const isPoli = activeCat === 'Policarbonati';
+            
+            const f = {
+                u: document.getElementById('f-unita').value, m: document.getElementById('f-modello').value,
+                i: document.getElementById('f-isolante').value, ce: document.getElementById('f-colore_est').value,
+                ci: document.getElementById('f-colore_int').value, a: document.getElementById('f-altezza').value,
+                se: document.getElementById('f-sp_est').value, si: document.getElementById('f-sp_int').value
+            };
+
+            const filtered = data.filter(item => {
+                const k_col = isPoli ? 'Colore' : 'Colore EST';
+                const k_alt = isPoli ? 'Spessore' : 'Altezza';
+                return (!f.u || String(item['Unità locale'] || '') === f.u) &&
+                       (!f.m || String(item['Modello'] || '') === f.m) &&
+                       (!f.i || String(item['Isolante'] || '') === f.i) &&
+                       (!f.ce || String(item[k_col] || '') === f.ce) &&
+                       (!f.ci || String(item['Colore INT'] || '') === f.ci) &&
+                       (!f.a || String(item[k_alt] || '') === f.a) &&
+                       (!f.se || String(item['SP EST'] || '') === f.se) &&
+                       (!f.si || String(item['SP INT'] || '') === f.si);
+            });
+
+            countDisplay.innerText = filtered.length;
+
+            if (data.length === 0) { list.innerHTML = `<div class="text-center py-20 text-red-400 italic">Dati non caricati.</div>`; return; }
+            if (filtered.length === 0) { list.innerHTML = `<div class="text-center py-20 text-slate-400 italic">Nessun risultato</div>`; return; }
+
+            const limitedResults = filtered.slice(0, 100);
+            let html = limitedResults.map(item => {
+                const lungMm = parseFloat(item['Lunghezza']) || 0;
+                const qta = parseFloat(item['Quantità Disponibile']) || 0;
+                const model = (item['Modello'] || '').replace(/'/g, "");
+                const code = (item['Articolo'] || 'N/A');
+                const unit = (item['Unità locale'] || 'MAG');
+                let pezzi = (lungMm > 0) ? Math.round(qta / (lungMm / 1000)) : "N.D.";
+
+                return `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold uppercase">${unit}</span>
+                        <div class="flex gap-2">
+                             <button onclick="sendTo('wa','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-green-600 font-bold border-b border-green-200">WA</button>
+                             <button onclick="sendTo('tg','${code}','${model}','${unit}',${lungMm})" class="text-[10px] text-blue-500 font-bold border-b border-blue-200">TG</button>
+                             <span class="text-[9px] text-blue-600 font-mono font-bold ml-1">${code}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-end mb-3">
+                        <h3 class="text-[11px] font-bold text-slate-700 leading-tight w-2/3">${item['Modello']}</h3>
+                        <div class="text-right leading-none">
+                            <span class="text-lg font-black text-blue-900">${qta}</span>
+                            <span class="text-[9px] text-slate-400 uppercase font-bold ml-0.5">${item['UM'] || 'MQ'}</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-lg mb-3 text-center">
+                        <div><p class="card-label">Lunghezza</p><p class="card-value">${lungMm} mm</p></div>
+                        <div><p class="card-label">Pezzi</p><p class="card-value">${pezzi}</p></div>
+                        <div><p class="card-label">Isolante</p><p class="card-value">${item['Isolante'] || '-'}</p></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 px-1">
+                        ${isPoli ? `
+                            <div><p class="card-label">Colore</p><p class="card-value">${item['Colore'] || '-'}</p></div>
+                            <div><p class="card-label text-right">Spessore</p><p class="card-value text-right">${item['Spessore'] || '-'}</p></div>
+                        ` : `
+                            <div><p class="card-label">SP EST/INT</p><p class="card-value">${item['SP EST'] ? item['SP EST'].replace('SP. ','') : '0'}/${item['SP INT'] ? item['SP INT'].replace('SP. ','') : '0'}</p></div>
+                            <div><p class="card-label text-right">Altezza</p><p class="card-value text-right">${item['Altezza'] || '-'}</p></div>
+                            <div class="col-span-2"><p class="card-label">Colore EST/INT</p><p class="card-value text-[10px] leading-tight">${item['Colore EST'] || '-'} / ${item['Colore INT'] || '-'}</p></div>
+                        `}
+                    </div>
+                </div>`;
+            }).join('');
+
+            if (filtered.length > 100) {
+                html += `<div class="p-6 text-center text-slate-500 text-[10px] italic">Vedi i primi 100 di ${filtered.length} risultati.</div>`;
+            }
+            list.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+
