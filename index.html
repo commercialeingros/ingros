@@ -245,35 +245,36 @@ async function checkAccess() {
             });
         }
 
-        function applyFilters() {
+       function applyFilters() {
     const selectFilters = document.querySelectorAll('#filter-rows select');
     let activeCount = 0;
 
+    // 1. Calcoliamo quanti filtri sono attivi (hanno un valore selezionato)
+    selectFilters.forEach(s => {
+        if (s.value && s.value !== "") {
+            activeCount++;
+        }
+    });
+
+    // 2. Filtriamo i dati
     let filtered = currentData.filter(item => {
         let matchSelect = true;
-        
         selectFilters.forEach(s => {
             const field = s.id.replace('filter-', '');
-            if (s.value) {
-                // Se la select ha un valore, incrementiamo il contatore (solo la prima volta nel loop)
-                if (matchSelect) { /* logica gestita fuori dal filter per il counter */ }
-                
-                if (item[field] != s.value) {
-                    matchSelect = false;
-                }
+            if (s.value && item[field] != s.value) {
+                matchSelect = false;
             }
         });
         return matchSelect;
     });
 
-    // Aggiornamento del contatore visivo
-    selectFilters.forEach(s => { if(s.value) activeCount++; });
-    
+    // 3. Gestione visiva del contatore (Pallino Nero)
     const counterElem = document.getElementById('filter-counter');
     if (activeCount > 0) {
         counterElem.innerText = activeCount;
         counterElem.classList.remove('hidden');
     } else {
+        counterElem.innerText = "0";
         counterElem.classList.add('hidden');
     }
 
@@ -392,14 +393,19 @@ async function checkAccess() {
         }
 
         function resetFilters() {
-            document.querySelectorAll('#filter-rows select').forEach(s => s.value = "");
-            document.getElementById('global-search').value = "";
+            // Svuota tutte le select
+            document.querySelectorAll('#filter-rows select').forEach(s => {
+                s.value = "";
+            });
+    
+            // Riesegue il filtro (che ora sarà vuoto e resetterà il contatore)
             applyFilters();
         }
 
     </script>
 </body>
 </html>
+
 
 
 
