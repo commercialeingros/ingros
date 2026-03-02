@@ -77,20 +77,29 @@
             </div>
         </div>
 
-        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50">
-            <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400">
-                <i class="fa-solid fa-house-flood-water text-xl"></i><span class="text-[10px] mt-1">COPERTURA</span>
-            </button>
-            <button onclick="switchTab('parete')" id="tab-parete" class="flex flex-col items-center text-gray-400">
-                <i class="fa-solid fa-border-all text-xl"></i><span class="text-[10px] mt-1">PARETE</span>
-            </button>
-            <button onclick="switchTab('policarbonati')" id="tab-policarbonati" class="flex flex-col items-center text-gray-400">
-                <i class="fa-solid fa-sun text-xl"></i><span class="text-[10px] mt-1">POLICARB.</span>
-            </button>
-            <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400">
-                <i class="fa-solid fa-align-justify text-xl"></i><span class="text-[10px] mt-1">GRECATE</span>
-            </button>
-        </nav>
+        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    
+    <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
+        <i class="fa-solid fa-house-chimney-window text-xl"></i>
+        <span class="text-[10px] mt-1 font-bold">COPERTURA</span>
+    </button>
+
+    <button onclick="switchTab('parete')" id="tab-parete" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
+        <i class="fa-solid fa-border-top-left text-xl"></i>
+        <span class="text-[10px] mt-1 font-bold">PARETE</span>
+    </button>
+
+    <button onclick="switchTab('policarbonati')" id="tab-policarbonati" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
+        <i class="fa-solid fa-layer-group text-xl"></i>
+        <span class="text-[10px] mt-1 font-bold">POLICARB.</span>
+    </button>
+
+    <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
+        <i class="fa-solid fa-barcode text-xl"></i>
+        <span class="text-[10px] mt-1 font-bold">GRECATE</span>
+    </button>
+
+</nav>
     </div>
 
     <script>
@@ -143,24 +152,42 @@ async function checkAccess() {
         
         // --- NAVIGAZIONE & CARICAMENTO ---
         async function switchTab(tab) {
-            currentTab = tab;
-            document.getElementById('current-category-title').innerText = tab.replace('_', ' ');
-            
-            // UI Tab active
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
-            document.getElementById(`tab-${tab}`).classList.add('tab-active');
-
-            try {
-                const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
-                currentData = await resp.json();
-                
-                // Ordina per lunghezza decrescente (se esiste il campo)
-                currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
-                
-                generateFilterUI();
-                applyFilters();
-            } catch (err) { alert("File non trovato su GitHub."); }
+        // EFFETTO VIBRAZIONE (15 millisecondi - un tocco leggero)
+        if (navigator.vibrate) {
+            navigator.vibrate(15);
         }
+
+        currentTab = tab;
+        document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
+    
+        // Gestione visuale delle icone (Colori)
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.classList.remove('text-red-600', 'scale-110');
+            btn.classList.add('text-gray-400');
+        });
+    
+        const activeBtn = document.getElementById(`tab-${tab}`);
+        activeBtn.classList.remove('text-gray-400');
+        activeBtn.classList.add('text-red-600', 'scale-110');
+
+        // Caricamento dati
+        try {
+            const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
+            currentData = await resp.json();
+        
+            // Ordina per lunghezza decrescente
+            currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
+        
+            generateFilterUI();
+            applyFilters();
+        
+            // Torna in alto alla lista quando cambi categoria
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        } catch (err) { 
+            console.error("Errore caricamento dati:", err);
+        }
+    }
 
         // --- FILTRI DINAMICI ---
         function generateFilterUI() {
@@ -327,6 +354,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
