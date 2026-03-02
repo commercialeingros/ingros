@@ -3602,22 +3602,6 @@
     {
         "Articolo":  "PCAPITRA000019",
         "Descrizione":  "LASTRA POL. ALVEOLARE PIANO . MODULO 2 PARETI 2W SP. 10 mm NEUTRO P. 2100 MM P. UTILE 2100 MM",
-        "Unita_locale":  "Marene",
-        "UM_1":  "MQ",
-        "Quantita_1":  31.5,
-        "UM_2":  "PZ",
-        "Quantita_2":  5,
-        "Modello":  "LASTRA POL. ALVEOLARE PIANO",
-        "Extramodello":  ".",
-        "Modulo":  "MODULO 2 PARETI 2W",
-        "Spessore":  "SP. 10 mm",
-        "Colore":  "NEUTRO",
-        "ProtezioneUV":  "PROTEZIONE",
-        "Lunghezza":  3000
-    },
-    {
-        "Articolo":  "PCAPITRA000019",
-        "Descrizione":  "LASTRA POL. ALVEOLARE PIANO . MODULO 2 PARETI 2W SP. 10 mm NEUTRO P. 2100 MM P. UTILE 2100 MM",
         "Unita_locale":  "Alessandria",
         "UM_1":  "MQ",
         "Quantita_1":  308.7,
