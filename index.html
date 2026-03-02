@@ -222,21 +222,34 @@ async function checkAccess() {
       function generateFilterUI() {
     const filterRows = document.getElementById('filter-rows');
     
-    // Mappatura esatta basata sul tuo JSON
-    const fields = ['Unita_locale', 'Modello', 'Altezza', 'Colore_EST', 'SP_EST'];
-    const labels = ['Sede', 'Modello Pannello', 'Spessore (mm)', 'Colore Est.', 'Spess. Lamiera'];
-    
-    // Salviamo i valori selezionati per non perderli nel ricalcolo
+    // Configurazione Campi e Etichette (Esattamente come richiesto)
+    const filterConfig = [
+        { id: 'Unita_locale', label: 'Sede' },
+        { id: 'Modello', label: 'Modello Pannello' },
+        { id: 'Isolante', label: 'Tipo Isolante' },
+        { id: 'Altezza', label: 'Spessore (mm)' },
+        { id: 'SP_EST', label: 'Spess. Lamiera Esterna' },
+        { id: 'SP_INT', label: 'Spess. Lamiera Interna' },
+        { id: 'Colore_EST', label: 'Colore Esterno' },
+        { id: 'Colore_INT', label: 'Colore Interno' }
+    ];
+
+    const fields = filterConfig.map(c => c.id);
     const currentSelections = {};
+    
     fields.forEach(f => {
         const el = document.getElementById(`filter-${f}`);
         if(el) currentSelections[f] = el.value;
     });
 
+    // Puliamo il contenitore (Ritorno a Colonna Singola)
     filterRows.innerHTML = '';
+    filterRows.className = "flex flex-col gap-4"; // Spaziatura verticale tra i filtri
 
-    fields.forEach((field, index) => {
-        // Calcolo opzioni disponibili in base agli ALTRI filtri già attivi
+    filterConfig.forEach((conf) => {
+        const field = conf.id;
+        
+        // Calcolo opzioni dinamiche basate sugli altri filtri
         let availableData = currentData.filter(item => {
             let match = true;
             fields.forEach(otherField => {
@@ -247,29 +260,33 @@ async function checkAccess() {
             return match;
         });
 
-        // Estraiamo i valori unici per questa tendina
+        // Valori unici ordinati
         const uniqueValues = [...new Set(availableData.map(item => item[field]))]
                             .filter(v => v !== null && v !== undefined && v !== "")
-                            .sort((a, b) => {
-                                // Se sono numeri (come l'Altezza), ordinali correttamente
-                                return (typeof a === 'number') ? a - b : String(a).localeCompare(String(b));
-                            });
+                            .sort((a, b) => (typeof a === 'number') ? a - b : String(a).localeCompare(String(b)));
 
-        const col = document.createElement('div');
-        col.className = "flex flex-col gap-1";
-        col.innerHTML = `
-            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">${labels[index]}</label>
+        const div = document.createElement('div');
+        div.className = "flex flex-col gap-1.5";
+        div.innerHTML = `
+            <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">${conf.label}</label>
             <div class="relative">
                 <select id="filter-${field}" onchange="applyFilters(); generateFilterUI();" 
-                        class="w-full bg-white border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-red-600 appearance-none pr-8 shadow-sm">
+                        class="w-full bg-white border-2 border-gray-100 rounded-xl p-3 text-sm outline-none focus:border-red-600 appearance-none shadow-sm font-semibold text-gray-800">
                     <option value="">TUTTI</option>
                     ${uniqueValues.map(v => `<option value="${v}" ${currentSelections[field] == v ? 'selected' : ''}>${v}</option>`).join('')}
                 </select>
-                <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-gray-300 pointer-events-none text-[10px]"></i>
+                <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 pointer-events-none"></i>
             </div>
         `;
-        filterRows.appendChild(col);
+        filterRows.appendChild(div);
     });
+
+    // AGGIUNGIAMO IL TASTO RESET IN FONDO AI FILTRI
+    const resetBtn = document.createElement('button');
+    resetBtn.onclick = resetFilters;
+    resetBtn.className = "mt-4 w-full py-4 bg-gray-100 text-gray-600 rounded-xl font-bold text-xs uppercase tracking-widest active:bg-gray-200 transition-colors mb-4";
+    resetBtn.innerHTML = `<i class="fa-solid fa-rotate-left mr-2"></i> Ripristina tutti i filtri`;
+    filterRows.appendChild(resetBtn);
 }
 
        function applyFilters() {
@@ -432,6 +449,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
