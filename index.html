@@ -209,30 +209,47 @@ async function checkAccess() {
 
         // --- RENDERING CARD ---
         function renderCards(data) {
-            const container = document.getElementById('card-list');
-            container.innerHTML = data.map(item => `
-                <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 font-black rounded-bl-xl text-lg">
-                        ${item['Quantita_1'] || 0} <span class="text-[10px] font-normal">${item['UM_1'] || 'PZ'}</span>
-                    </div>
-                    <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">${item.Unita_locale}</div>
-                    <div class="font-black text-gray-800 text-lg leading-tight mb-1">${item.Articolo}</div>
-                    <div class="text-xs text-gray-500 font-medium mb-3">${item.Descrizione}</div>
-                    
-                    <div class="grid grid-cols-2 gap-2 text-[11px] bg-gray-50 p-2 rounded-lg">
-                        <div><span class="text-gray-400">Modello:</span> ${item.Modello || '-'}</div>
-                        <div><span class="text-gray-400">Dim.:</span> ${item.Lunghezza || '-'} x ${item.Altezza || '-'}</div>
-                        <div><span class="text-gray-400">Colore:</span> ${item.Colore_EST || item.Colore || '-'}</div>
-                        <div><span class="text-gray-400">Isol.:</span> ${item.Isolante || item.Spessore || '-'}</div>
-                    </div>
+    const container = document.getElementById('card-list');
+    container.innerHTML = data.map(item => {
+        // Calcolo della stringa per il bollino in alto a destra
+        const lunghezza = item.Lunghezza || '0';
+        const pezzi = item.Quantita_1 || '0';
+        const um = item.UM_1 || 'PZ';
+        const testataCard = `${lunghezza} x ${pezzi} ${um}`;
 
-                    <button onclick="sendWA('${item.Unita_locale}', '${item.Articolo}')" 
-                            class="mt-3 w-full bg-green-500 text-white py-2 rounded-lg flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600">
-                        <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI INFO
-                    </button>
+        return `
+            <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 font-black rounded-bl-xl text-sm border-l border-b border-red-200">
+                    ${testataCard}
                 </div>
-            `).join('');
-        }
+
+                <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">
+                    ${item.Unita_locale}
+                </div>
+
+                <div class="text-sm text-gray-600 mb-1 font-normal">
+                    ${item.Articolo}
+                </div>
+
+                <div class="font-bold text-gray-800 text-base leading-tight mb-3">
+                    ${item.Descrizione}
+                </div>
+                
+                <div class="grid grid-cols-1 gap-1 text-[11px] bg-gray-50 p-2 rounded-lg">
+                    <div><span class="text-gray-400 uppercase font-bold">Altezza:</span> ${item.Altezza || '-'} mm</div>
+                    <div><span class="text-gray-400 uppercase font-bold">Colore EST:</span> ${item.Colore_EST || item.Colore || '-'}</div>
+                    <div><span class="text-gray-400 uppercase font-bold">Colore INT:</span> ${item.Colore_INT || '-'}</div>
+                    <div><span class="text-gray-400 uppercase font-bold">Isolante:</span> ${item.Isolante || item.Spessore || '-'}</div>
+                </div>
+
+                <button onclick="sendWA('${item.Unita_locale}', '${item.Articolo}')" 
+                        class="mt-3 w-full bg-green-500 text-white py-2 rounded-lg flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600 transition-colors">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI INFO
+                </button>
+            </div>
+        `;
+    }).join('');
+}
 
         // --- WHATSAPP & IMPOSTAZIONI ---
         function sendWA(sede, art) {
@@ -279,6 +296,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
