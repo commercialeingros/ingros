@@ -209,13 +209,19 @@ async function checkAccess() {
 
         // --- RENDERING CARD ---
        function renderCards(data) {
-    const container = document.getElementById('card-list');
-    container.innerHTML = data.map(item => {
-        const lunghezza = item.Lunghezza || '0';
-        const pezzi = item.Quantita_1 || '0';
-        const um = item.UM_1 || 'PZ';
-        const testataCard = `${lunghezza} x ${pezzi} ${um}`;
-
+           // 1. Definiamo le variabili base
+            const container = document.getElementById('card-list');
+            container.innerHTML = data.map(item => {
+            const lunghezza = item.Lunghezza || '0';
+            const pezzi = item.Quantita_1 || '0';
+            const um = item.UM_1 || 'PZ';
+            const testataCard = `${lunghezza} x ${pezzi} ${um}`;
+            // 2. PREPARAZIONE DATI PER WHATSAPP (Qui inseriamo le righe)
+            // Puliamo la descrizione da eventuali apostrofi che bloccherebbero il codice
+            const desc = (item.Descrizione || '').replace(/'/g, "\\'"); 
+            // Creiamo la lista di argomenti da passare alla funzione sendWA
+            const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${desc}', '${lunghezza}', '${pezzi}'`;
+        // 3. Generiamo l'HTML della card        
         return `
             <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative overflow-hidden">
                 <div class="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 font-black rounded-bl-xl text-sm border-l border-b border-red-200">
@@ -253,8 +259,8 @@ async function checkAccess() {
                     </div>
                 </div>
 
-                <button onclick="sendWA('${item.Unita_locale}', '${item.Articolo}')" 
-                        class="mt-3 w-full bg-green-500 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600 shadow-sm">
+                <button onclick="sendWA(${waArgs})" 
+                    class="mt-3 w-full bg-green-500 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600 shadow-sm">
                     <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI INFO
                 </button>
             </div>
@@ -263,12 +269,26 @@ async function checkAccess() {
 }
 
         // --- WHATSAPP & IMPOSTAZIONI ---
-        function sendWA(sede, art) {
+        function sendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
-            if(!num) { alert("Numero non impostato per questa sede"); return; }
-            const msg = `Ciao, sono ${currentUser.nome}. Richiedo disponibilità per articolo: ${art} presso sede ${sede}.`;
-            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
-        }
+            if(!num) { 
+                alert("Attenzione: Numero non impostato per la sede di " + sede + ". Vai nelle impostazioni."); 
+                return; 
+            }
+
+        // Costruzione del messaggio
+        const riga1 = `*RICHIESTA INFO GIACENZA*`;
+        const riga2 = `Articolo: ${art}`;
+        const riga3 = `Descrizione: ${desc}`;
+        const riga4 = `Misura: *${lung} x ${pz} PZ*`;
+        const riga5 = `Sede: ${sede}`;
+        const riga6 = `Richiedente: ${currentUser.nome} ${currentUser.cognome}`;
+
+        const messaggioCompleto = `${riga1}\n\n${riga2}\n${riga3}\n${riga4}\n\n${riga5}\n${riga6}`;
+    
+        // Apre WhatsApp
+        window.open(`https://wa.me/${num}?text=${encodeURIComponent(messaggioCompleto)}`);
+    }
 
         function toggleSettings() {
             const mod = document.getElementById('settings-modal');
@@ -307,6 +327,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
