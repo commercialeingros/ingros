@@ -169,7 +169,7 @@ async function checkAccess() {
             let fields = [];
 
             if (currentTab === 'copertura' || currentTab === 'parete') {
-                fields = ["Unita_locale", "Modello", "Isolante", "Altezza", "SP_EST", "Colore_EST"];
+                fields = ["Unita_locale", "Modello", "Isolante", "Altezza", "Colore_EST", "Colore_INT", "SP_EST","SP_INT" ];
             } else if (currentTab === 'policarbonati') {
                 fields = ["Unita_locale", "Modello", "Spessore", "Colore"];
             } else {
@@ -296,6 +296,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
