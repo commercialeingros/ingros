@@ -51,7 +51,12 @@
                 </div>
                 <div class="flex gap-4 items-center">
                     <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-circle-user text-2xl"></i></button>
-                    <button onclick="toggleFilters()" class="bg-red-600 text-white p-2 rounded-lg shadow-md"><i class="fa-solid fa-sliders"></i></button>
+                    <button onclick="toggleFilters()" class="relative bg-red-600 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
+                            0
+                        </span>
+                    </button>
                 </div>
             </div>
             
@@ -241,25 +246,40 @@ async function checkAccess() {
         }
 
         function applyFilters() {
-            // Ora filtriamo solo in base alle select dei filtri avanzati
-            let filtered = currentData.filter(item => {
-            const selectFilters = document.querySelectorAll('#filter-rows select');
-            let matchSelect = true;
+    const selectFilters = document.querySelectorAll('#filter-rows select');
+    let activeCount = 0;
+
+    let filtered = currentData.filter(item => {
+        let matchSelect = true;
         
-            selectFilters.forEach(s => {
-                const field = s.id.replace('filter-', '');
-                // Se la select ha un valore e non corrisponde al campo del JSON, scarta l'articolo
-                if (s.value && item[field] != s.value) {
+        selectFilters.forEach(s => {
+            const field = s.id.replace('filter-', '');
+            if (s.value) {
+                // Se la select ha un valore, incrementiamo il contatore (solo la prima volta nel loop)
+                if (matchSelect) { /* logica gestita fuori dal filter per il counter */ }
+                
+                if (item[field] != s.value) {
                     matchSelect = false;
                 }
-            });
-        
-            return matchSelect;
+            }
         });
+        return matchSelect;
+    });
+
+    // Aggiornamento del contatore visivo
+    selectFilters.forEach(s => { if(s.value) activeCount++; });
+    
+    const counterElem = document.getElementById('filter-counter');
+    if (activeCount > 0) {
+        counterElem.innerText = activeCount;
+        counterElem.classList.remove('hidden');
+    } else {
+        counterElem.classList.add('hidden');
+    }
 
     renderCards(filtered);
 }
-
+   
         // --- RENDERING CARD ---
        function renderCards(data) {
            // 1. Definiamo le variabili base
@@ -380,6 +400,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
