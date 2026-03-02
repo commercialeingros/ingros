@@ -160,8 +160,16 @@ async function checkAccess() {
         
         // --- NAVIGAZIONE & CARICAMENTO ---
        async function switchTab(tab) {
-    // Vibrazione tattile
-    if (navigator.vibrate) navigator.vibrate(15);
+            // Feedback per iOS/Android: Mini rimbalzo visivo
+            const btn = document.getElementById(`tab-${tab}`);
+            btn.classList.add('scale-90', 'opacity-50');
+    
+            // Tenta la vibrazione (funzionerà se salvata in Home o su Android)
+            if (navigator.vibrate) navigator.vibrate(20);
+
+            setTimeout(() => {
+                btn.classList.remove('opacity-50');
+            }, 100);
 
     // MOSTRA LO SPINNER
     const spinner = document.getElementById('loading-spinner');
@@ -372,6 +380,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
