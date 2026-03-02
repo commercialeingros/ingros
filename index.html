@@ -16,6 +16,14 @@
         .modal-bottom { transform: translateY(100%); transition: transform 0.3s ease-out; }
         .modal-bottom.active { transform: translateY(0); }
         .card-giacenza { border-left: 4px solid #dc2626; }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        
     </style>
     
 </head>
@@ -31,7 +39,10 @@
     </div>
 
     <div id="app-content" class="hidden">
-        
+        <div id="loading-spinner" class="hidden fixed inset-0 bg-white/60 z-[80] flex flex-col items-center justify-center backdrop-blur-sm">
+            <div class="w-12 h-12 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
+            <p class="text-red-600 font-bold text-sm animate-pulse uppercase tracking-widest">Caricamento dati...</p>
+        </div>
         <header class="bg-white shadow-md sticky top-0 z-40 p-4">
             <div class="flex justify-between items-center mb-4">
                 <div>
@@ -151,43 +162,51 @@ async function checkAccess() {
 }
         
         // --- NAVIGAZIONE & CARICAMENTO ---
-        async function switchTab(tab) {
-        // EFFETTO VIBRAZIONE (15 millisecondi - un tocco leggero)
-        if (navigator.vibrate) {
-            navigator.vibrate(15);
-        }
+       async function switchTab(tab) {
+    // Vibrazione tattile
+    if (navigator.vibrate) navigator.vibrate(15);
 
-        currentTab = tab;
-        document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
+    // MOSTRA LO SPINNER
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.remove('hidden');
+
+    currentTab = tab;
+    document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
     
-        // Gestione visuale delle icone (Colori)
-        document.querySelectorAll('nav button').forEach(btn => {
-            btn.classList.remove('text-red-600', 'scale-110');
-            btn.classList.add('text-gray-400');
-        });
-    
-        const activeBtn = document.getElementById(`tab-${tab}`);
-        activeBtn.classList.remove('text-gray-400');
-        activeBtn.classList.add('text-red-600', 'scale-110');
+    // UI Tab active
+    document.querySelectorAll('nav button').forEach(btn => {
+        btn.classList.remove('text-red-600', 'scale-110');
+        btn.classList.add('text-gray-400');
+    });
+    const activeBtn = document.getElementById(`tab-${tab}`);
+    activeBtn.classList.remove('text-gray-400');
+    activeBtn.classList.add('text-red-600', 'scale-110');
 
-        // Caricamento dati
-        try {
-            const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
-            currentData = await resp.json();
+    try {
+        // Caricamento dati con timestamp per evitare cache
+        const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
+        if (!resp.ok) throw new Error("File non trovato");
         
-            // Ordina per lunghezza decrescente
-            currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
+        currentData = await resp.json();
         
-            generateFilterUI();
-            applyFilters();
+        // Ordina per lunghezza decrescente
+        currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
         
-            // Torna in alto alla lista quando cambi categoria
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        generateFilterUI();
+        applyFilters();
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        } catch (err) { 
-            console.error("Errore caricamento dati:", err);
-        }
+    } catch (err) { 
+        alert("Errore nel caricamento dei dati di " + tab);
+    } finally {
+        // NASCONDI LO SPINNER (anche in caso di errore)
+        // Aggiungiamo un piccolo delay di 300ms per evitare fastidiosi "flash" se il caricamento è troppo veloce
+        setTimeout(() => {
+            spinner.classList.add('hidden');
+        }, 300);
     }
+}
 
         // --- FILTRI DINAMICI ---
         function generateFilterUI() {
@@ -354,6 +373,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
