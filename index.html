@@ -219,31 +219,51 @@ async function checkAccess() {
 }
 
         // --- FILTRI DINAMICI ---
-        function generateFilterUI() {
-            const container = document.getElementById('filter-rows');
-            container.innerHTML = "";
-            let fields = [];
+       function generateFilterUI() {
+    const filterRows = document.getElementById('filter-rows');
+    const fields = ['Unita_locale', 'Modello', 'Colore_EST', 'Isolante'];
+    const labels = ['Sede', 'Modello', 'Colore Est.', 'Spessore'];
+    
+    // Salviamo i valori attualmente selezionati per non perderli durante il ricalcolo
+    const currentSelections = {};
+    fields.forEach(f => {
+        const el = document.getElementById(`filter-${f}`);
+        if(el) currentSelections[f] = el.value;
+    });
 
-            if (currentTab === 'copertura' || currentTab === 'parete') {
-                fields = ["Unita_locale", "Modello", "Isolante", "Altezza", "Colore_EST", "Colore_INT", "SP_EST","SP_INT" ];
-            } else if (currentTab === 'policarbonati') {
-                fields = ["Unita_locale", "Modello", "Spessore", "Colore"];
-            } else {
-                fields = ["Unita_locale", "Tipo_Materiale", "Colore", "Spessore"];
-            }
+    filterRows.innerHTML = '';
 
-            fields.forEach(f => {
-                const values = [...new Set(currentData.map(item => item[f]))].filter(v => v).sort();
-                let options = `<option value="">Tutti - ${f.replace('_', ' ')}</option>`;
-                values.forEach(v => options += `<option value="${v}">${v}</option>`);
-                
-                container.innerHTML += `
-                    <div>
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">${f}</label>
-                        <select id="filter-${f}" onchange="applyFilters()" class="w-full border rounded-lg p-2 bg-gray-50">${options}</select>
-                    </div>`;
+    fields.forEach((field, index) => {
+        // --- IL TRUCCO ---
+        // Per ogni tendina, guardiamo quali opzioni esistono nei dati filtrati 
+        // DAGLI ALTRI filtri, ma ignorando il filtro di se stessa.
+        let availableData = currentData.filter(item => {
+            let match = true;
+            fields.forEach(otherField => {
+                if (otherField !== field && currentSelections[otherField]) {
+                    if (item[otherField] != currentSelections[otherField]) match = false;
+                }
             });
-        }
+            return match;
+        });
+
+        const uniqueValues = [...new Set(availableData.map(item => item[field]))]
+                            .filter(v => v)
+                            .sort();
+
+        const col = document.createElement('div');
+        col.className = "flex flex-col gap-1";
+        col.innerHTML = `
+            <label class="text-[10px] font-bold text-gray-400 uppercase">${labels[index]}</label>
+            <select id="filter-${field}" onchange="applyFilters(); generateFilterUI();" 
+                    class="w-full bg-white border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-red-600 appearance-none">
+                <option value="">TUTTI</option>
+                ${uniqueValues.map(v => `<option value="${v}" ${currentSelections[field] === v ? 'selected' : ''}>${v}</option>`).join('')}
+            </select>
+        `;
+        filterRows.appendChild(col);
+    });
+}
 
        function applyFilters() {
     const selectFilters = document.querySelectorAll('#filter-rows select');
@@ -405,6 +425,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
