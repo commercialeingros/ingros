@@ -98,31 +98,49 @@
         let currentData = [];
         let currentTab = 'copertura';
         let currentUser = null;
-        let rubrica = JSON.parse(localStorage.getItem('ingros_rubrica')) || {
-            "Modugno": "3930000000",
-            "Piacenza": "3400000000",
-            "Melfi": "3330000000"
-        };
+        let rubrica = {}; // Inizia vuota, verrà popolata dal file o dal localStorage
 
-        // --- ACCESSO ---
-        async function checkAccess() {
-            const inputCode = document.getElementById('access-code').value;
+        // --- CARICAMENTO RUBRICA ---
+        async function loadRubrica() {
+            // 1. Prova a caricare la rubrica personalizzata dal telefono (localStorage)
+            const localRubrica = localStorage.getItem('ingros_rubrica');
+    
+            if (localRubrica) {
+                rubrica = JSON.parse(localRubrica);
+            } else {
+            // 2. Se non esiste, scarica quella predefinita da GitHub
             try {
-                const resp = await fetch(`data/users.json?v=${Date.now()}`);
-                const users = await resp.json();
-                currentUser = users.find(u => u.codice === inputCode);
-
-                if (currentUser) {
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('app-content').classList.remove('hidden');
-                    document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
-                    switchTab('copertura');
-                } else {
-                    document.getElementById('login-error').classList.remove('hidden');
-                }
-            } catch (err) { alert("Errore connessione server GitHub."); }
+                const resp = await fetch(`data/rubrica.json?v=${Date.now()}`);
+                rubrica = await resp.json();
+                // Salva una copia locale come base
+                localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
+            } catch (err) {
+                console.error("Errore nel caricamento della rubrica esterna");
+                // Fallback di emergenza
+                rubrica = { "Modugno": "000", "Piacenza": "000" };
+            }
+            }
         }
+        // Aggiorna la funzione checkAccess per includere il caricamento rubrica
+async function checkAccess() {
+    const inputCode = document.getElementById('access-code').value;
+    try {
+        const resp = await fetch(`data/users.json?v=${Date.now()}`);
+        const users = await resp.json();
+        currentUser = users.find(u => u.codice === inputCode);
 
+        if (currentUser) {
+            await loadRubrica(); // <-- Carica la rubrica dopo il login
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-content').classList.remove('hidden');
+            document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
+            switchTab('copertura');
+        } else {
+            document.getElementById('login-error').classList.remove('hidden');
+        }
+    } catch (err) { alert("Errore connessione server."); }
+}
+        
         // --- NAVIGAZIONE & CARICAMENTO ---
         async function switchTab(tab) {
             currentTab = tab;
@@ -261,6 +279,7 @@
     </script>
 </body>
 </html>
+
 
 
 
