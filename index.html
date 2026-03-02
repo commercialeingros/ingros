@@ -219,12 +219,14 @@ async function checkAccess() {
 }
 
         // --- FILTRI DINAMICI ---
-       function generateFilterUI() {
+      function generateFilterUI() {
     const filterRows = document.getElementById('filter-rows');
-    const fields = ['Unita_locale', 'Modello', 'Colore_EST', 'Isolante'];
-    const labels = ['Sede', 'Modello', 'Colore Est.', 'Spessore'];
     
-    // Salviamo i valori attualmente selezionati per non perderli durante il ricalcolo
+    // Mappatura esatta basata sul tuo JSON
+    const fields = ['Unita_locale', 'Modello', 'Altezza', 'Colore_EST', 'SP_EST'];
+    const labels = ['Sede', 'Modello Pannello', 'Spessore (mm)', 'Colore Est.', 'Spess. Lamiera'];
+    
+    // Salviamo i valori selezionati per non perderli nel ricalcolo
     const currentSelections = {};
     fields.forEach(f => {
         const el = document.getElementById(`filter-${f}`);
@@ -234,9 +236,7 @@ async function checkAccess() {
     filterRows.innerHTML = '';
 
     fields.forEach((field, index) => {
-        // --- IL TRUCCO ---
-        // Per ogni tendina, guardiamo quali opzioni esistono nei dati filtrati 
-        // DAGLI ALTRI filtri, ma ignorando il filtro di se stessa.
+        // Calcolo opzioni disponibili in base agli ALTRI filtri già attivi
         let availableData = currentData.filter(item => {
             let match = true;
             fields.forEach(otherField => {
@@ -247,19 +247,26 @@ async function checkAccess() {
             return match;
         });
 
+        // Estraiamo i valori unici per questa tendina
         const uniqueValues = [...new Set(availableData.map(item => item[field]))]
-                            .filter(v => v)
-                            .sort();
+                            .filter(v => v !== null && v !== undefined && v !== "")
+                            .sort((a, b) => {
+                                // Se sono numeri (come l'Altezza), ordinali correttamente
+                                return (typeof a === 'number') ? a - b : String(a).localeCompare(String(b));
+                            });
 
         const col = document.createElement('div');
         col.className = "flex flex-col gap-1";
         col.innerHTML = `
-            <label class="text-[10px] font-bold text-gray-400 uppercase">${labels[index]}</label>
-            <select id="filter-${field}" onchange="applyFilters(); generateFilterUI();" 
-                    class="w-full bg-white border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-red-600 appearance-none">
-                <option value="">TUTTI</option>
-                ${uniqueValues.map(v => `<option value="${v}" ${currentSelections[field] === v ? 'selected' : ''}>${v}</option>`).join('')}
-            </select>
+            <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">${labels[index]}</label>
+            <div class="relative">
+                <select id="filter-${field}" onchange="applyFilters(); generateFilterUI();" 
+                        class="w-full bg-white border border-gray-200 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-red-600 appearance-none pr-8 shadow-sm">
+                    <option value="">TUTTI</option>
+                    ${uniqueValues.map(v => `<option value="${v}" ${currentSelections[field] == v ? 'selected' : ''}>${v}</option>`).join('')}
+                </select>
+                <i class="fa-solid fa-chevron-down absolute right-3 top-3 text-gray-300 pointer-events-none text-[10px]"></i>
+            </div>
         `;
         filterRows.appendChild(col);
     });
@@ -425,6 +432,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
