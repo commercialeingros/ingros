@@ -54,10 +54,7 @@
                     <button onclick="toggleFilters()" class="bg-red-600 text-white p-2 rounded-lg shadow-md"><i class="fa-solid fa-sliders"></i></button>
                 </div>
             </div>
-            <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
-                <input type="text" id="global-search" oninput="applyFilters()" placeholder="Cerca descrizione o codice..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-10 outline-none focus:ring-2 focus:ring-red-600">
-            </div>
+            
         </header>
 
         <main id="card-list" class="p-3 space-y-3">
@@ -236,22 +233,24 @@ async function checkAccess() {
         }
 
         function applyFilters() {
-            const search = document.getElementById('global-search').value.toLowerCase();
+            // Ora filtriamo solo in base alle select dei filtri avanzati
             let filtered = currentData.filter(item => {
-                // Filtro testo
-                const matchSearch = JSON.stringify(item).toLowerCase().includes(search);
-                // Filtri select
-                const selectFilters = document.querySelectorAll('#filter-rows select');
-                let matchSelect = true;
-                selectFilters.forEach(s => {
-                    const field = s.id.replace('filter-', '');
-                    if (s.value && item[field] != s.value) matchSelect = false;
-                });
-                return matchSearch && matchSelect;
+            const selectFilters = document.querySelectorAll('#filter-rows select');
+            let matchSelect = true;
+        
+            selectFilters.forEach(s => {
+                const field = s.id.replace('filter-', '');
+                // Se la select ha un valore e non corrisponde al campo del JSON, scarta l'articolo
+                if (s.value && item[field] != s.value) {
+                    matchSelect = false;
+                }
             });
+        
+            return matchSelect;
+        });
 
-            renderCards(filtered);
-        }
+    renderCards(filtered);
+}
 
         // --- RENDERING CARD ---
        function renderCards(data) {
@@ -373,6 +372,7 @@ async function checkAccess() {
     </script>
 </body>
 </html>
+
 
 
 
