@@ -9,85 +9,259 @@
     <meta name="apple-mobile-web-app-title" content="Ingros App">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        .tab-active { color: #e11d48; border-top: 2px solid #e11d48; }
-        .filter-badge { background: #e11d48; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; position: absolute; top: -5px; right: -5px; }
+        body { -webkit-tap-highlight-color: transparent; }
+        .tab-active { color: #dc2626; font-weight: bold; }
+        .modal-bottom { transform: translateY(100%); transition: transform 0.3s ease-out; }
+        .modal-bottom.active { transform: translateY(0); }
+        .card-giacenza { border-left: 4px solid #dc2626; }
     </style>
+    
 </head>
-<body class="bg-gray-50 font-sans">
+    
+<body class="bg-gray-100 pb-24">
 
-    <div id="login-screen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-6">
-        <img src="data/IngrosCoperture.jpg" class="w-48 mb-8">
-        <h1 class="text-2xl font-bold mb-4">Accesso Utenti</h1>
-        <input type="password" id="access-code" placeholder="Inserisci il tuo codice" class="w-full max-w-xs border-2 border-gray-300 rounded-lg p-3 mb-4 text-center text-xl">
-        <button onclick="checkAccess()" class="bg-red-600 text-white px-8 py-3 rounded-lg font-bold w-full max-w-xs">ENTRA</button>
-        <p id="login-error" class="text-red-500 mt-4 hidden">Codice non valido o utente rimosso.</p>
+    <div id="login-screen" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
+        <img src="data/IngrosCoperture.jpg" class="w-64 mb-10 shadow-lg rounded-lg" onerror="this.src='https://via.placeholder.com/200?text=LOGO+INGROS'">
+        <h2 class="text-xl font-bold text-gray-700 mb-6">ACCESSO AGENTI ESTERNI</h2>
+        <input type="password" id="access-code" placeholder="Inserisci Codice Accesso" class="w-full max-w-xs border-2 border-gray-300 rounded-xl p-4 text-center text-2xl mb-4 focus:border-red-600 outline-none">
+        <button onclick="checkAccess()" class="bg-red-600 text-white font-bold py-4 px-12 rounded-xl w-full max-w-xs shadow-lg active:scale-95 transition-transform">ENTRA</button>
+        <p id="login-error" class="text-red-600 mt-4 hidden font-semibold italic">Codice errato o utente disabilitato</p>
     </div>
 
-    <div id="main-app" class="hidden pb-20">
-        <header class="bg-white p-4 sticky top-0 z-40 shadow-sm">
+    <div id="app-content" class="hidden">
+        
+        <header class="bg-white shadow-md sticky top-0 z-40 p-4">
             <div class="flex justify-between items-center mb-4">
-                <h1 id="page-title" class="text-2xl font-bold text-gray-800">Copertura</h1>
-                <div class="flex gap-4">
-                    <button onclick="openSettings()"><i class="fa-solid fa-gear text-gray-500 text-xl"></i></button>
-                    <div class="relative">
-                        <button onclick="toggleFilterModal()"><i class="fa-solid fa-sliders text-gray-500 text-xl"></i></button>
-                        <span id="active-filters-count" class="hidden filter-badge">0</span>
-                    </div>
+                <div>
+                    <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
+                    <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-circle-user text-2xl"></i></button>
+                    <button onclick="toggleFilters()" class="bg-red-600 text-white p-2 rounded-lg shadow-md"><i class="fa-solid fa-sliders"></i></button>
                 </div>
             </div>
-            <input type="text" id="search-bar" oninput="applyFilters()" placeholder="Cerca..." class="w-full bg-gray-100 rounded-xl p-3 pl-10 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-gray-400"></i>
+                <input type="text" id="global-search" oninput="applyFilters()" placeholder="Cerca descrizione o codice..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2 px-10 outline-none focus:ring-2 focus:ring-red-600">
+            </div>
         </header>
 
-        <main id="card-container" class="p-4 space-y-4">
+        <main id="card-list" class="p-3 space-y-3">
             </main>
 
-        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-2 z-50">
-            <button onclick="switchTab('copertura')" class="flex flex-col items-center text-gray-400 tab-btn" id="btn-copertura">
-                <i class="fa-solid fa-warehouse text-xl"></i><span class="text-xs">Copertura</span>
+        <div id="filter-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-end">
+            <div class="bg-white w-full p-6 rounded-t-3xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="font-bold text-lg">FILTRI AVANZATI</h3>
+                    <button onclick="resetFilters()" class="text-red-600 text-sm font-bold">RESETTA</button>
+                </div>
+                <div id="filter-rows" class="space-y-4 pt-2">
+                    </div>
+                <button onclick="toggleFilters()" class="w-full bg-black text-white py-4 rounded-xl font-bold mt-4">APPLICA FILTRI</button>
+            </div>
+        </div>
+
+        <div id="settings-modal" class="fixed inset-0 bg-white z-[70] hidden p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-black">IMPOSTAZIONI</h2>
+                <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
+            </div>
+            <div class="space-y-6">
+                <h3 class="font-bold border-b pb-2">RUBRICA UNITÀ LOCALI (WhatsApp)</h3>
+                <div id="rubrica-list" class="space-y-4">
+                    </div>
+                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold">SALVA RUBRICA</button>
+            </div>
+        </div>
+
+        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50">
+            <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400">
+                <i class="fa-solid fa-house-flood-water text-xl"></i><span class="text-[10px] mt-1">COPERTURA</span>
             </button>
-            <button onclick="switchTab('parete')" class="flex flex-col items-center text-gray-400 tab-btn" id="btn-parete">
-                <i class="fa-solid fa-border-all text-xl"></i><span class="text-xs">Parete</span>
+            <button onclick="switchTab('parete')" id="tab-parete" class="flex flex-col items-center text-gray-400">
+                <i class="fa-solid fa-border-all text-xl"></i><span class="text-[10px] mt-1">PARETE</span>
             </button>
-            <button onclick="switchTab('policarbonati')" class="flex flex-col items-center text-gray-400 tab-btn" id="btn-policarbonati">
-                <i class="fa-solid fa-layer-group text-xl"></i><span class="text-xs">Policarb.</span>
+            <button onclick="switchTab('policarbonati')" id="tab-policarbonati" class="flex flex-col items-center text-gray-400">
+                <i class="fa-solid fa-sun text-xl"></i><span class="text-[10px] mt-1">POLICARB.</span>
             </button>
-            <button onclick="switchTab('lam_grecate')" class="flex flex-col items-center text-gray-400 tab-btn" id="btn-lam_grecate">
-                <i class="fa-solid fa-sheet-plastic text-xl"></i><span class="text-xs">Grecate</span>
+            <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400">
+                <i class="fa-solid fa-align-justify text-xl"></i><span class="text-[10px] mt-1">GRECATE</span>
             </button>
         </nav>
     </div>
 
     <script>
-        // Logica per il caricamento degli utenti e il controllo accesso
-        async function checkAccess() {
-            const code = document.getElementById('access-code').value;
-            try {
-                // Legge il file utenti da GitHub
-                const response = await fetch('data/users.json');
-                const users = await response.json();
-                const user = users.find(u => u.codice === code);
+        // --- CONFIGURAZIONE ---
+        let currentData = [];
+        let currentTab = 'copertura';
+        let currentUser = null;
+        let rubrica = JSON.parse(localStorage.getItem('ingros_rubrica')) || {
+            "Modugno": "3930000000",
+            "Piacenza": "3400000000",
+            "Melfi": "3330000000"
+        };
 
-                if (user) {
-                    localStorage.setItem('user_logged', JSON.stringify(user));
+        // --- ACCESSO ---
+        async function checkAccess() {
+            const inputCode = document.getElementById('access-code').value;
+            try {
+                const resp = await fetch(`data/users.json?v=${Date.now()}`);
+                const users = await resp.json();
+                currentUser = users.find(u => u.codice === inputCode);
+
+                if (currentUser) {
                     document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('main-app').classList.remove('hidden');
-                    initApp();
+                    document.getElementById('app-content').classList.remove('hidden');
+                    document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
+                    switchTab('copertura');
                 } else {
                     document.getElementById('login-error').classList.remove('hidden');
                 }
-            } catch (e) {
-                alert("Errore nel caricamento del file utenti. Verifica il file data/users.json su GitHub.");
-            }
+            } catch (err) { alert("Errore connessione server GitHub."); }
         }
 
-        // Funzione per inviare WhatsApp
-        function sendWhatsApp(unitaLocale, articolo) {
-            const rubrica = JSON.parse(localStorage.getItem('rubrica')) || { "Modugno": "393xxxx", "Piacenza": "340xxxx" };
-            const tel = rubrica[unitaLocale] || "";
-            const msg = `Ciao, sono interessato all'articolo: ${articolo} presso la sede di ${unitaLocale}.`;
-            window.open(`https://wa.me/${tel}?text=${encodeURIComponent(msg)}`);
+        // --- NAVIGAZIONE & CARICAMENTO ---
+        async function switchTab(tab) {
+            currentTab = tab;
+            document.getElementById('current-category-title').innerText = tab.replace('_', ' ');
+            
+            // UI Tab active
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+            document.getElementById(`tab-${tab}`).classList.add('tab-active');
+
+            try {
+                const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
+                currentData = await resp.json();
+                
+                // Ordina per lunghezza decrescente (se esiste il campo)
+                currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
+                
+                generateFilterUI();
+                applyFilters();
+            } catch (err) { alert("File non trovato su GitHub."); }
         }
+
+        // --- FILTRI DINAMICI ---
+        function generateFilterUI() {
+            const container = document.getElementById('filter-rows');
+            container.innerHTML = "";
+            let fields = [];
+
+            if (currentTab === 'copertura' || currentTab === 'parete') {
+                fields = ["Unita_locale", "Modello", "Isolante", "Altezza", "SP_EST", "Colore_EST"];
+            } else if (currentTab === 'policarbonati') {
+                fields = ["Unita_locale", "Modello", "Spessore", "Colore"];
+            } else {
+                fields = ["Unita_locale", "Tipo_Materiale", "Colore", "Spessore"];
+            }
+
+            fields.forEach(f => {
+                const values = [...new Set(currentData.map(item => item[f]))].filter(v => v).sort();
+                let options = `<option value="">Tutti - ${f.replace('_', ' ')}</option>`;
+                values.forEach(v => options += `<option value="${v}">${v}</option>`);
+                
+                container.innerHTML += `
+                    <div>
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">${f}</label>
+                        <select id="filter-${f}" onchange="applyFilters()" class="w-full border rounded-lg p-2 bg-gray-50">${options}</select>
+                    </div>`;
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById('global-search').value.toLowerCase();
+            let filtered = currentData.filter(item => {
+                // Filtro testo
+                const matchSearch = JSON.stringify(item).toLowerCase().includes(search);
+                // Filtri select
+                const selectFilters = document.querySelectorAll('#filter-rows select');
+                let matchSelect = true;
+                selectFilters.forEach(s => {
+                    const field = s.id.replace('filter-', '');
+                    if (s.value && item[field] != s.value) matchSelect = false;
+                });
+                return matchSearch && matchSelect;
+            });
+
+            renderCards(filtered);
+        }
+
+        // --- RENDERING CARD ---
+        function renderCards(data) {
+            const container = document.getElementById('card-list');
+            container.innerHTML = data.map(item => `
+                <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 font-black rounded-bl-xl text-lg">
+                        ${item['Quantita_1'] || 0} <span class="text-[10px] font-normal">${item['UM_1'] || 'PZ'}</span>
+                    </div>
+                    <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">${item.Unita_locale}</div>
+                    <div class="font-black text-gray-800 text-lg leading-tight mb-1">${item.Articolo}</div>
+                    <div class="text-xs text-gray-500 font-medium mb-3">${item.Descrizione}</div>
+                    
+                    <div class="grid grid-cols-2 gap-2 text-[11px] bg-gray-50 p-2 rounded-lg">
+                        <div><span class="text-gray-400">Modello:</span> ${item.Modello || '-'}</div>
+                        <div><span class="text-gray-400">Dim.:</span> ${item.Lunghezza || '-'} x ${item.Altezza || '-'}</div>
+                        <div><span class="text-gray-400">Colore:</span> ${item.Colore_EST || item.Colore || '-'}</div>
+                        <div><span class="text-gray-400">Isol.:</span> ${item.Isolante || item.Spessore || '-'}</div>
+                    </div>
+
+                    <button onclick="sendWA('${item.Unita_locale}', '${item.Articolo}')" 
+                            class="mt-3 w-full bg-green-500 text-white py-2 rounded-lg flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI INFO
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // --- WHATSAPP & IMPOSTAZIONI ---
+        function sendWA(sede, art) {
+            const num = rubrica[sede] || "";
+            if(!num) { alert("Numero non impostato per questa sede"); return; }
+            const msg = `Ciao, sono ${currentUser.nome}. Richiedo disponibilità per articolo: ${art} presso sede ${sede}.`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
+        }
+
+        function toggleSettings() {
+            const mod = document.getElementById('settings-modal');
+            if (mod.classList.contains('hidden')) {
+                const list = document.getElementById('rubrica-list');
+                list.innerHTML = Object.keys(rubrica).map(s => `
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-bold text-gray-400 uppercase">${s}</label>
+                        <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border p-3 rounded-xl bg-gray-50 font-mono">
+                    </div>
+                `).join('');
+                mod.classList.remove('hidden');
+            } else { mod.classList.add('hidden'); }
+        }
+
+        function saveRubrica() {
+            document.querySelectorAll('#rubrica-list input').forEach(i => {
+                rubrica[i.dataset.sede] = i.value;
+            });
+            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
+            alert("Rubrica salvata sul telefono!");
+            toggleSettings();
+        }
+
+        function toggleFilters() {
+            const m = document.getElementById('filter-modal');
+            m.classList.toggle('hidden');
+        }
+
+        function resetFilters() {
+            document.querySelectorAll('#filter-rows select').forEach(s => s.value = "");
+            document.getElementById('global-search').value = "";
+            applyFilters();
+        }
+
     </script>
 </body>
 </html>
+
+
+
+
