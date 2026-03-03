@@ -11,21 +11,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        body { -webkit-tap-highlight-color: transparent; }
+        body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         .tab-active { color: #dc2626; font-weight: bold; }
         .modal-bottom { transform: translateY(100%); transition: transform 0.3s ease-out; }
         .modal-bottom.active { transform: translateY(0); }
         .card-giacenza { border-left: 4px solid #dc2626; }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
         
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .animate-spin { animation: spin 1s linear infinite; }
     </style>
-    
 </head>
     
 <body class="bg-gray-100 pb-24">
@@ -43,8 +37,9 @@
             <div class="w-12 h-12 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin mb-4"></div>
             <p class="text-red-600 font-bold text-sm animate-pulse uppercase tracking-widest">Caricamento dati...</p>
         </div>
+
         <header class="bg-white shadow-md sticky top-0 z-40 p-4">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center">
                 <div>
                     <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
                     <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
@@ -53,27 +48,22 @@
                     <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-circle-user text-2xl"></i></button>
                     <button onclick="toggleFilters()" class="relative bg-red-600 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform">
                         <i class="fa-solid fa-sliders"></i>
-                        <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">
-                            0
-                        </span>
+                        <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
                     </button>
                 </div>
             </div>
-            
         </header>
 
-        <main id="card-list" class="p-3 space-y-3">
-            </main>
+        <main id="card-list" class="p-3 space-y-3"></main>
 
         <div id="filter-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-end">
             <div class="bg-white w-full p-6 rounded-t-3xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="font-bold text-lg">FILTRI AVANZATI</h3>
-                    <button onclick="resetFilters()" class="text-red-600 text-sm font-bold">RESETTA</button>
+                    <button onclick="resetFilters()" class="text-red-600 text-sm font-bold">RESETTA TUTTO</button>
                 </div>
-                <div id="filter-rows" class="space-y-4 pt-2">
-                    </div>
-                <button onclick="toggleFilters()" class="w-full bg-black text-white py-4 rounded-xl font-bold mt-4">APPLICA FILTRI</button>
+                <div id="filter-rows" class="space-y-4 pt-2"></div>
+                <button onclick="toggleFilters()" class="w-full bg-black text-white py-4 rounded-xl font-bold mt-4 shadow-lg">MOSTRA RISULTATI</button>
             </div>
         </div>
 
@@ -83,387 +73,242 @@
                 <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
             </div>
             <div class="space-y-6">
-                <h3 class="font-bold border-b pb-2">RUBRICA UNITÀ LOCALI (WhatsApp)</h3>
-                <div id="rubrica-list" class="space-y-4">
-                    </div>
-                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold">SALVA RUBRICA</button>
+                <h3 class="font-bold border-b pb-2 tracking-tight">RUBRICA UNITÀ LOCALI</h3>
+                <div id="rubrica-list" class="space-y-4"></div>
+                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold shadow-lg">SALVA CONFIGURAZIONE</button>
             </div>
         </div>
 
-        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
-    
-    <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
-        <i class="fa-solid fa-house-chimney-window text-xl"></i>
-        <span class="text-[10px] mt-1 font-bold">COPERTURA</span>
-    </button>
-
-    <button onclick="switchTab('parete')" id="tab-parete" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
-        <i class="fa-solid fa-border-top-left text-xl"></i>
-        <span class="text-[10px] mt-1 font-bold">PARETE</span>
-    </button>
-
-    <button onclick="switchTab('policarbonati')" id="tab-policarbonati" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
-        <i class="fa-solid fa-layer-group text-xl"></i>
-        <span class="text-[10px] mt-1 font-bold">POLICARB.</span>
-    </button>
-
-    <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400 transition-all duration-300 transform active:scale-90">
-        <i class="fa-solid fa-barcode text-xl"></i>
-        <span class="text-[10px] mt-1 font-bold">GRECATE</span>
-    </button>
-
-</nav>
+        <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
+            <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
+                <i class="fa-solid fa-house-chimney-window text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold">COPERTURA</span>
+            </button>
+            <button onclick="switchTab('parete')" id="tab-parete" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
+                <i class="fa-solid fa-border-top-left text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold">PARETE</span>
+            </button>
+            <button onclick="switchTab('policarbonati')" id="tab-policarbonati" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
+                <i class="fa-solid fa-layer-group text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold">POLICARB.</span>
+            </button>
+            <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
+                <i class="fa-solid fa-barcode text-xl"></i>
+                <span class="text-[9px] mt-1 font-bold">GRECATE</span>
+            </button>
+        </nav>
     </div>
 
     <script>
-        // --- CONFIGURAZIONE ---
         let currentData = [];
         let currentTab = 'copertura';
         let currentUser = null;
-        let rubrica = {}; // Inizia vuota, verrà popolata dal file o dal localStorage
+        let rubrica = {};
 
-        // --- CARICAMENTO RUBRICA ---
-        async function loadRubrica() {
-            // 1. Prova a caricare la rubrica personalizzata dal telefono (localStorage)
-            const localRubrica = localStorage.getItem('ingros_rubrica');
-    
-            if (localRubrica) {
-                rubrica = JSON.parse(localRubrica);
-            } else {
-            // 2. Se non esiste, scarica quella predefinita da GitHub
+        // --- AUTH & SETUP ---
+        async function checkAccess() {
+            const inputCode = document.getElementById('access-code').value;
             try {
-                const resp = await fetch(`data/rubrica.json?v=${Date.now()}`);
-                rubrica = await resp.json();
-                // Salva una copia locale come base
-                localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
-            } catch (err) {
-                console.error("Errore nel caricamento della rubrica esterna");
-                // Fallback di emergenza
-                rubrica = { "Modugno": "000", "Piacenza": "000" };
-            }
-            }
-        }
-        // Aggiorna la funzione checkAccess per includere il caricamento rubrica
-async function checkAccess() {
-    const inputCode = document.getElementById('access-code').value;
-    try {
-        const resp = await fetch(`data/users.json?v=${Date.now()}`);
-        const users = await resp.json();
-        currentUser = users.find(u => u.codice === inputCode);
+                const resp = await fetch(`data/users.json?v=${Date.now()}`);
+                const users = await resp.json();
+                currentUser = users.find(u => u.codice === inputCode);
 
-        if (currentUser) {
-            await loadRubrica(); // <-- Carica la rubrica dopo il login
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-content').classList.remove('hidden');
-            document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
-            switchTab('copertura');
-        } else {
-            document.getElementById('login-error').classList.remove('hidden');
-        }
-    } catch (err) { alert("Errore connessione server."); }
-}
-        
-        // --- NAVIGAZIONE & CARICAMENTO ---
-       async function switchTab(tab) {
-            // Feedback per iOS/Android: Mini rimbalzo visivo
-            const btn = document.getElementById(`tab-${tab}`);
-            btn.classList.add('scale-90', 'opacity-50');
-    
-            // Tenta la vibrazione (funzionerà se salvata in Home o su Android)
-            if (navigator.vibrate) navigator.vibrate(20);
-
-            setTimeout(() => {
-                btn.classList.remove('opacity-50');
-            }, 100);
-
-    // MOSTRA LO SPINNER
-    const spinner = document.getElementById('loading-spinner');
-    spinner.classList.remove('hidden');
-
-    currentTab = tab;
-    document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
-    
-    // UI Tab active
-    document.querySelectorAll('nav button').forEach(btn => {
-        btn.classList.remove('text-red-600', 'scale-110');
-        btn.classList.add('text-gray-400');
-    });
-    const activeBtn = document.getElementById(`tab-${tab}`);
-    activeBtn.classList.remove('text-gray-400');
-    activeBtn.classList.add('text-red-600', 'scale-110');
-
-    try {
-        // Caricamento dati con timestamp per evitare cache
-        const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
-        if (!resp.ok) throw new Error("File non trovato");
-        
-        currentData = await resp.json();
-        
-        // Ordina per lunghezza decrescente
-        currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
-        
-        generateFilterUI();
-        applyFilters();
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    } catch (err) { 
-        alert("Errore nel caricamento dei dati di " + tab);
-    } finally {
-        // NASCONDI LO SPINNER (anche in caso di errore)
-        // Aggiungiamo un piccolo delay di 300ms per evitare fastidiosi "flash" se il caricamento è troppo veloce
-        setTimeout(() => {
-            spinner.classList.add('hidden');
-        }, 300);
-    }
-}
-
-        // --- FILTRI DINAMICI ---
-      function generateFilterUI() {
-    const filterRows = document.getElementById('filter-rows');
-    
-    // Configurazione Campi e Etichette (Esattamente come richiesto)
-    const filterConfig = [
-        { id: 'Unita_locale', label: 'Sede' },
-        { id: 'Modello', label: 'Modello Pannello' },
-        { id: 'Isolante', label: 'Tipo Isolante' },
-        { id: 'Altezza', label: 'Spessore (mm)' },
-        { id: 'SP_EST', label: 'Spess. Lamiera Esterna' },
-        { id: 'SP_INT', label: 'Spess. Lamiera Interna' },
-        { id: 'Colore_EST', label: 'Colore Esterno' },
-        { id: 'Colore_INT', label: 'Colore Interno' }
-    ];
-
-    const fields = filterConfig.map(c => c.id);
-    const currentSelections = {};
-    
-    fields.forEach(f => {
-        const el = document.getElementById(`filter-${f}`);
-        if(el) currentSelections[f] = el.value;
-    });
-
-    // Puliamo il contenitore (Ritorno a Colonna Singola)
-    filterRows.innerHTML = '';
-    filterRows.className = "flex flex-col gap-4"; // Spaziatura verticale tra i filtri
-
-    filterConfig.forEach((conf) => {
-        const field = conf.id;
-        
-        // Calcolo opzioni dinamiche basate sugli altri filtri
-        let availableData = currentData.filter(item => {
-            let match = true;
-            fields.forEach(otherField => {
-                if (otherField !== field && currentSelections[otherField]) {
-                    if (item[otherField] != currentSelections[otherField]) match = false;
+                if (currentUser) {
+                    await loadRubrica();
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('app-content').classList.remove('hidden');
+                    document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
+                    switchTab('copertura');
+                } else {
+                    document.getElementById('login-error').classList.remove('hidden');
                 }
-            });
-            return match;
-        });
-
-        // Valori unici ordinati
-        const uniqueValues = [...new Set(availableData.map(item => item[field]))]
-                            .filter(v => v !== null && v !== undefined && v !== "")
-                            .sort((a, b) => (typeof a === 'number') ? a - b : String(a).localeCompare(String(b)));
-
-        const div = document.createElement('div');
-        div.className = "flex flex-col gap-1.5";
-        div.innerHTML = `
-            <label class="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">${conf.label}</label>
-            <div class="relative">
-                <select id="filter-${field}" onchange="applyFilters(); generateFilterUI();" 
-                        class="w-full bg-white border-2 border-gray-100 rounded-xl p-3 text-sm outline-none focus:border-red-600 appearance-none shadow-sm font-semibold text-gray-800">
-                    <option value="">TUTTI</option>
-                    ${uniqueValues.map(v => `<option value="${v}" ${currentSelections[field] == v ? 'selected' : ''}>${v}</option>`).join('')}
-                </select>
-                <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-gray-400 pointer-events-none"></i>
-            </div>
-        `;
-        filterRows.appendChild(div);
-    });
-
-    // AGGIUNGIAMO IL TASTO RESET IN FONDO AI FILTRI
-    const resetBtn = document.createElement('button');
-    resetBtn.onclick = resetFilters;
-    resetBtn.className = "mt-4 w-full py-4 bg-gray-100 text-gray-600 rounded-xl font-bold text-xs uppercase tracking-widest active:bg-gray-200 transition-colors mb-4";
-    resetBtn.innerHTML = `<i class="fa-solid fa-rotate-left mr-2"></i> Ripristina tutti i filtri`;
-    filterRows.appendChild(resetBtn);
-}
-
-       function applyFilters() {
-    const selectFilters = document.querySelectorAll('#filter-rows select');
-    let activeCount = 0;
-
-    // 1. Calcoliamo quanti filtri sono attivi (hanno un valore selezionato)
-    selectFilters.forEach(s => {
-        if (s.value && s.value !== "") {
-            activeCount++;
+            } catch (err) { alert("Errore connessione server."); }
         }
-    });
 
-    // 2. Filtriamo i dati
-    let filtered = currentData.filter(item => {
-        let matchSelect = true;
-        selectFilters.forEach(s => {
-            const field = s.id.replace('filter-', '');
-            if (s.value && item[field] != s.value) {
-                matchSelect = false;
+        async function loadRubrica() {
+            const localRub = localStorage.getItem('ingros_rubrica');
+            if (localRub) {
+                rubrica = JSON.parse(localRub);
+            } else {
+                try {
+                    const resp = await fetch(`data/rubrica.json?v=${Date.now()}`);
+                    rubrica = await resp.json();
+                    localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
+                } catch (err) { rubrica = { "Modugno": "000", "Marene": "000" }; }
             }
-        });
-        return matchSelect;
-    });
+        }
 
-    // 3. Gestione visiva del contatore (Pallino Nero)
-    const counterElem = document.getElementById('filter-counter');
-    if (activeCount > 0) {
-        counterElem.innerText = activeCount;
-        counterElem.classList.remove('hidden');
-    } else {
-        counterElem.innerText = "0";
-        counterElem.classList.add('hidden');
-    }
+        // --- CORE FUNCTIONS ---
+        async function switchTab(tab) {
+            const btn = document.getElementById(`tab-${tab}`);
+            if (navigator.vibrate) navigator.vibrate(15);
+            
+            const spinner = document.getElementById('loading-spinner');
+            spinner.classList.remove('hidden');
 
-    renderCards(filtered);
-}
-   
-        // --- RENDERING CARD ---
-       function renderCards(data) {
-           // 1. Definiamo le variabili base
-            const container = document.getElementById('card-list');
-            container.innerHTML = data.map(item => {
-            const lunghezza = item.Lunghezza || '0';
-            const pezzi = item.Quantita_1 || '0';
-            const um = item.UM_1 || 'PZ';
-            const testataCard = `${lunghezza} x ${pezzi} ${um}`;
-            // 2. PREPARAZIONE DATI PER WHATSAPP (Qui inseriamo le righe)
-            // Puliamo la descrizione da eventuali apostrofi che bloccherebbero il codice
-            const desc = (item.Descrizione || '').replace(/'/g, "\\'"); 
-            // Creiamo la lista di argomenti da passare alla funzione sendWA
-            const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${desc}', '${lunghezza}', '${pezzi}'`;
-        // 3. Generiamo l'HTML della card        
-        return `
-            <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-red-100 text-red-600 px-3 py-1 font-black rounded-bl-xl text-sm border-l border-b border-red-200">
-                    ${testataCard}
-                </div>
+            currentTab = tab;
+            document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
+            
+            document.querySelectorAll('nav button').forEach(b => b.className = "flex flex-col items-center text-gray-400 transition-all active:scale-90");
+            btn.className = "flex flex-col items-center text-red-600 font-bold scale-110 transition-all";
 
-                <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">
-                    ${item.Unita_locale}
-                </div>
-
-                <div class="text-sm text-gray-600 mb-1 font-normal italic">
-                    Art. ${item.Articolo}
-                </div>
-
-                <div class="font-bold text-gray-800 text-base leading-tight mb-3">
-                    ${item.Descrizione}
-                </div>
+            try {
+                const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
+                currentData = await resp.json();
+                currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
                 
-                <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] bg-gray-50 p-2 rounded-lg border border-gray-100">
-                    <div><span class="text-gray-400 uppercase font-bold">Altezza:</span> ${item.Altezza || '-'}</div>
-                    <div><span class="text-gray-400 uppercase font-bold">Isolante:</span> ${item.Isolante || item.Spessore || '-'}</div>
-                    
-                    <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
-                        <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Est:</span><br>${item.Colore_EST || item.Colore || '-'}
-                    </div>
-                    <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
-                        <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Int:</span><br>${item.Colore_INT || '-'}
-                    </div>
+                generateFilterUI();
+                applyFilters();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (err) { alert("Errore caricamento dati."); }
+            finally { setTimeout(() => spinner.classList.add('hidden'), 300); }
+        }
 
-                    <div class="col-span-1 border-t border-gray-200 pt-1">
-                        <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Est (mm):</span><br>${item.SP_EST || '-'}
-                    </div>
-                    <div class="col-span-1 border-t border-gray-200 pt-1">
-                        <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Int (mm):</span><br>${item.SP_INT || '-'}
-                    </div>
-                </div>
+        function generateFilterUI() {
+            const filterRows = document.getElementById('filter-rows');
+            let config = [];
 
-                <button onclick="sendWA(${waArgs})" 
-                    class="mt-3 w-full bg-green-500 text-white py-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm active:bg-green-600 shadow-sm">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI INFO
-                </button>
-            </div>
-        `;
-    }).join('');
-}
+            // Adattamento configurazione filtri in base alla Tab
+            if (currentTab === 'policarbonati') {
+                config = [
+                    { id: 'Unita_locale', label: 'Sede' },
+                    { id: 'Modello', label: 'Modello' },
+                    { id: 'Spessore', label: 'Spessore' },
+                    { id: 'Colore', label: 'Colore' }
+                ];
+            } else if (currentTab === 'lam_grecate') {
+                config = [
+                    { id: 'Unita_locale', label: 'Sede' },
+                    { id: 'Modello', label: 'Profilo/Modello' },
+                    { id: 'Colore', label: 'Colore' },
+                    { id: 'Spessore', label: 'Spessore' }
+                ];
+            } else { // Parete e Copertura
+                config = [
+                    { id: 'Unita_locale', label: 'Sede' },
+                    { id: 'Modello', label: 'Modello' },
+                    { id: 'Isolante', label: 'Isolante' },
+                    { id: 'Altezza', label: 'Altezza/Spessore' },
+                    { id: 'SP_EST', label: 'Spess. Est.' },
+                    { id: 'SP_INT', label: 'Spess. Int.' },
+                    { id: 'Colore_EST', label: 'Colore Est.' },
+                    { id: 'Colore_INT', label: 'Colore Int.' }
+                ];
+            }
 
-        // --- WHATSAPP & IMPOSTAZIONI ---
+            const currentSelections = {};
+            config.forEach(c => {
+                const el = document.getElementById(`filter-${c.id}`);
+                if(el) currentSelections[c.id] = el.value;
+            });
+
+            filterRows.innerHTML = '';
+            config.forEach(conf => {
+                let available = currentData.filter(item => {
+                    let match = true;
+                    config.forEach(other => {
+                        if (other.id !== conf.id && currentSelections[other.id]) {
+                            if (item[other.id] != currentSelections[other.id]) match = false;
+                        }
+                    });
+                    return match;
+                });
+
+                const values = [...new Set(available.map(i => i[conf.id]))]
+                    .filter(v => v && v !== "")
+                    .sort((a,b) => (typeof a === 'number' ? a-b : String(a).localeCompare(String(b))));
+
+                const div = document.createElement('div');
+                div.className = "flex flex-col gap-1";
+                div.innerHTML = `
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">${conf.label}</label>
+                    <select id="filter-${conf.id}" onchange="applyFilters(); generateFilterUI();" 
+                            class="w-full bg-white border-2 border-gray-100 rounded-xl p-3 text-sm font-semibold outline-none focus:border-red-600 appearance-none shadow-sm">
+                        <option value="">TUTTI</option>
+                        ${values.map(v => `<option value="${v}" ${currentSelections[conf.id] == v ? 'selected' : ''}>${v}</option>`).join('')}
+                    </select>
+                `;
+                filterRows.appendChild(div);
+            });
+        }
+
+        function applyFilters() {
+            const selects = document.querySelectorAll('#filter-rows select');
+            let active = 0;
+            let filtered = currentData.filter(item => {
+                let m = true;
+                selects.forEach(s => {
+                    const f = s.id.replace('filter-', '');
+                    if (s.value) {
+                        if (item[f] != s.value) m = false;
+                    }
+                });
+                return m;
+            });
+
+            selects.forEach(s => { if(s.value) active++; });
+            const counter = document.getElementById('filter-counter');
+            counter.innerText = active;
+            active > 0 ? counter.classList.remove('hidden') : counter.classList.add('hidden');
+
+            renderCards(filtered);
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('card-list');
+            if (data.length === 0) {
+                container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato con questi filtri</div>`;
+                return;
+            }
+
+            container.innerHTML = data.map(item => {
+                const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
+                
+                // Logica dettagli dinamici per card
+                let details = '';
+                if (currentTab === 'policarbonati') {
+                    details = `
+                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore:</span><br>${item.Spessore || '-'}</div>
+                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore:</span><br>${item.Colore || '-'}</div>
+                        <div class="col-span-2 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Modulo:</span><br>${item.Modulo || '-'}</div>
+                    `;
+                } else if (currentTab === 'lam_grecate') {
+                    details = `
+                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale:</span><br>${item.Tipo_Materiale || '-'}</div>
+                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore:</span><br>${item.Spessore || '-'}</div>
+                        <div class="col-span-2 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore:</span><br>${item.Colore || '-'}</div>
+                    `;
+                } else {
+                    details = `
+                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante:</span><br>${item.Altezza}mm ${item.Isolante}</div>
+                        <div class="col-span-1 text-right"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Est:</span><br>${item.SP_EST || '-'}</div>
+                        <div class="col-span-1 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est:</span><br>${item.Colore_EST || '-'}</div>
+                        <div class="col-span-1 border-t pt-1 text-right"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Int:</span><br>${item.Colore_INT || '-'}</div>
+                    `;
+                }
+
+                return `
+                    <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative">
+                        <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase">
+                            L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}
+                        </div>
+                        <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div>
+                        <div class="text-[11px] text-gray-500 mb-1 italic">Art. ${item.Articolo}</div>
+                        <div class="font-bold text-gray-800 text-sm leading-tight mb-3 pr-10">${item.Descrizione}</div>
+                        
+                        <div class="grid grid-cols-2 gap-2 text-[11px] bg-gray-50 p-3 rounded-lg border border-gray-100 font-medium">
+                            ${details}
+                        </div>
+
+                        <button onclick="sendWA(${waArgs})" class="mt-3 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:bg-green-600 shadow-md">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- UTILS ---
         function sendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
-            if(!num) { 
-                alert("Attenzione: Numero non impostato per la sede di " + sede + ". Vai nelle impostazioni."); 
-                return; 
-            }
-
-        // Costruzione del messaggio
-        const riga1 = `*RICHIESTA INFO GIACENZA*`;
-        const riga2 = `Articolo: ${art}`;
-        const riga3 = `Descrizione: ${desc}`;
-        const riga4 = `Misura: *${lung} x ${pz} PZ*`;
-        const riga5 = `Sede: ${sede}`;
-        const riga6 = `Richiedente: ${currentUser.nome} ${currentUser.cognome}`;
-
-        const messaggioCompleto = `${riga1}\n\n${riga2}\n${riga3}\n${riga4}\n\n${riga5}\n${riga6}`;
-    
-        // Apre WhatsApp
-        window.open(`https://wa.me/${num}?text=${encodeURIComponent(messaggioCompleto)}`);
-    }
-
-        function toggleSettings() {
-            const mod = document.getElementById('settings-modal');
-            if (mod.classList.contains('hidden')) {
-                const list = document.getElementById('rubrica-list');
-                list.innerHTML = Object.keys(rubrica).map(s => `
-                    <div class="flex flex-col gap-1">
-                        <label class="text-xs font-bold text-gray-400 uppercase">${s}</label>
-                        <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border p-3 rounded-xl bg-gray-50 font-mono">
-                    </div>
-                `).join('');
-                mod.classList.remove('hidden');
-            } else { mod.classList.add('hidden'); }
-        }
-
-        function saveRubrica() {
-            document.querySelectorAll('#rubrica-list input').forEach(i => {
-                rubrica[i.dataset.sede] = i.value;
-            });
-            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
-            alert("Rubrica salvata sul telefono!");
-            toggleSettings();
-        }
-
-        function toggleFilters() {
-            const m = document.getElementById('filter-modal');
-            m.classList.toggle('hidden');
-        }
-
-        function resetFilters() {
-            // Svuota tutte le select
-            document.querySelectorAll('#filter-rows select').forEach(s => {
-                s.value = "";
-            });
-    
-            // Riesegue il filtro (che ora sarà vuoto e resetterà il contatore)
-            applyFilters();
-        }
-
-    </script>
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            if(!num) return
