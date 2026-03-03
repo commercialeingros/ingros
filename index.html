@@ -311,4 +311,37 @@
         // --- UTILS ---
         function sendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
-            if(!num) return
+            if(!num) return alert("Imposta il numero per " + sede + " nelle impostazioni.");
+            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome}`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
+        }
+
+        function toggleSettings() {
+            const mod = document.getElementById('settings-modal');
+            if (mod.classList.contains('hidden')) {
+                document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase">${s}</label>
+                        <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border-2 p-3 rounded-xl bg-gray-50 font-bold text-gray-700">
+                    </div>
+                `).join('');
+                mod.classList.remove('hidden');
+            } else mod.classList.add('hidden');
+        }
+
+        function saveRubrica() {
+            document.querySelectorAll('#rubrica-list input').forEach(i => rubrica[i.dataset.sede] = i.value);
+            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
+            alert("Rubrica aggiornata!");
+            toggleSettings();
+        }
+
+        function toggleFilters() { document.getElementById('filter-modal').classList.toggle('hidden'); }
+        function resetFilters() {
+            document.querySelectorAll('#filter-rows select').forEach(s => s.value = "");
+            applyFilters();
+            generateFilterUI();
+        }
+    </script>
+</body>
+</html>
