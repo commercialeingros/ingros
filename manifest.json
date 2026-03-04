@@ -1,20 +1,20 @@
 {
-  "name": "Ingros Giacenze",
   "short_name": "Ingros",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#dc2626",
+  "name": "Ingros Giacenze",
   "icons": [
     {
-      "src": "icona-192.png",
+      "src": "data/IngrosCoperture.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg"
     },
     {
-      "src": "icona-512.png",
+      "src": "data/IngrosCoperture.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
-  ]
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#dc2626",
+  "background_color": "#ffffff"
 }
