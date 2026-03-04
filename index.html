@@ -21,7 +21,8 @@
         .animate-spin { animation: spin 1s linear infinite; }
 
         /* Stile del Popup di Installazione */
-    #install-popup {
+    /* Stile del Popup di Installazione iOS/Android */
+#install-popup {
     display: none;
     position: fixed;
     bottom: 20px;
@@ -33,7 +34,35 @@
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     border: 2px solid #dc2626;
-    }
+}
+
+/* Animazione del Dito che Clicca */
+@keyframes tap-ios {
+    0% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
+    20% { transform: scale(1.1) translate(-50%, -50%); opacity: 1; }
+    80% { transform: scale(0.9) translate(-50%, -50%); opacity: 1; }
+    100% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
+}
+
+.share-icon-wrapper {
+    position: relative;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.finger-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 0, 0, 0.5); /* Dito semitrasparente rosso */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: tap-ios 1.5s infinite; /* Avvia l'animazione */
+    pointer-events: none; /* Non intercettare i click */
+}
         
     </style>
 </head>
@@ -41,14 +70,14 @@
 <body class="bg-gray-100 pb-24">
     <div id="install-popup">
     <div class="flex items-center gap-4">
-        <img src="data/IngrosCoperture.jpg" class="w-12 h-12 rounded-lg shadow">
+        <img src="data/IngrosCoperture.jpg" class="w-12 h-12 rounded-lg shadow" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
         <div class="flex-1">
             <h4 class="font-bold text-gray-800 text-sm">Installa App Ingros</h4>
             <p id="install-text" class="text-xs text-gray-500">Aggiungi l'app alla tua home per un accesso rapido.</p>
         </div>
-            <button id="btn-install-app" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase">Installa</button>
-            <button onclick="document.getElementById('install-popup').style.display='none'" class="text-gray-400 text-xl">&times;</button>
-        </div>
+        <button id="btn-install-app" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase shadow-md active:scale-95 transition-transform">Installa</button>
+        <button onclick="document.getElementById('install-popup').style.display='none'" class="text-gray-400 text-xl font-bold ml-2">&times;</button>
+    </div>
     </div>
     
     <div id="login-screen" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
@@ -168,38 +197,38 @@
         // --- POP UP INSTALLAZIONE WEBAPP ---
         let deferredPrompt;
 
-// Rileva se è un iPhone/iPad
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        // Rileva se è un iPhone/iPad
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Impedisce a Chrome di mostrare il suo banner grigio standard
-    e.preventDefault();
-    deferredPrompt = e;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Impedisce a Chrome di mostrare il suo banner grigio standard
+            e.preventDefault();
+            deferredPrompt = e;
     
-    // Mostra il nostro popup personalizzato se non è già installata
-    if (!isStandalone) {
-        document.getElementById('install-popup').style.display = 'block';
-    }
-});
+            // Mostra il nostro popup personalizzato se non è già installata
+            if (!isStandalone) {
+                document.getElementById('install-popup').style.display = 'block';
+            }
+        });
 
-// Gestione click sul tasto Installa
-document.getElementById('btn-install-app').addEventListener('click', async () => {
-    if (isIOS) {
-        // Su iOS spieghiamo come fare (non c'è installazione automatica)
-        alert("Per installare su iPhone:\n1. Clicca il tasto 'Condividi' (il quadrato con la freccia in alto)\n2. Scorri e seleziona 'Aggiungi alla schermata Home'");
-        document.getElementById('install-popup').style.display = 'none';
-    } else if (deferredPrompt) {
-        // Su Android/Chrome PC avviamo l'installazione vera
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            console.log('App installata');
+        // Gestione click sul tasto Installa
+        document.getElementById('btn-install-app').addEventListener('click', async () => {
+        if (isIOS) {
+            // Su iOS spieghiamo come fare (non c'è installazione automatica)
+            alert("Per installare su iPhone:\n1. Clicca il tasto 'Condividi' (il quadrato con la freccia in alto)\n2. Scorri e seleziona 'Aggiungi alla schermata Home'");
             document.getElementById('install-popup').style.display = 'none';
+        } else if (deferredPrompt) {
+            // Su Android/Chrome PC avviamo l'installazione vera
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('App installata');
+                document.getElementById('install-popup').style.display = 'none';
+            }
+            deferredPrompt = null;
         }
-        deferredPrompt = null;
-    }
-});
+    });
 
 // Se è iOS, mostriamo comunque il popup per guidarli
 window.addEventListener('load', () => {
@@ -421,6 +450,7 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
+
 
 
 
