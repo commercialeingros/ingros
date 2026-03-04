@@ -37,6 +37,54 @@
     border: 2px solid #dc2626;
 }
 
+        /* Assicuriamoci che il popup sia sopra a tutto */
+#install-popup {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: white;
+    z-index: 200; /* Più alto del login-screen */
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 2px solid #dc2626;
+}
+
+/* Animazione per Edge (3 linee orizzontali) */
+.menu-edge-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    padding: 4px;
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+.line-edge {
+    width: 16px;
+    height: 2px;
+    background-color: #333;
+}
+
+.finger-tap-edge {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background-color: rgba(220, 38, 38, 0.4);
+    border-radius: 50%;
+    animation: pulse-edge 1.5s infinite;
+}
+
+@keyframes pulse-edge {
+    0% { transform: scale(1); opacity: 0; }
+    50% { transform: scale(1.4); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
 /* Animazione del Dito che Clicca */
 @keyframes tap-ios {
     0% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
@@ -259,16 +307,15 @@ function showInstallPopup() {
     popup.style.display = 'block';
 
     if (isIOS) {
-        // Animazione dito per iPhone
-        text.innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i><div class="finger-icon"></div></div> e <b>'Aggiungi a Home'</b>`;
-        btn.innerText = "Istruzioni";
-    } else if (isEdgeAndroid) {
-        // Animazione puntini per Edge
-        text.innerHTML = `Clicca i 3 puntini <div class="menu-dots-wrapper"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="finger-tap-android"></div></div> e seleziona <b>'Aggiungi'</b>`;
-        btn.innerText = "Installa";
+        text.innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i><div class="finger-icon"></div></div> e poi seleziona <b>'Aggiungi a Home'</b>`;
+    } else if (isEdge) {
+        text.innerHTML = `
+            Clicca il menu in basso <div class="menu-edge-wrapper"><div class="line-edge"></div><div class="line-edge"></div><div class="line-edge"></div><div class="finger-tap-edge"></div></div> e premi <b>'Aggiungi al telefono'</b>.
+            <div class="edge-arrow"><i class="fa-solid fa-angles-down"></i></div>
+        `;
+        btn.innerText = "OK, HO CAPITO";
     }
 }
-
 document.getElementById('btn-install-app').addEventListener('click', async () => {
     if (deferredPrompt) {
         deferredPrompt.prompt();
@@ -494,6 +541,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
