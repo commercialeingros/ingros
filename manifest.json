@@ -1,6 +1,7 @@
 {
   "short_name": "Ingros",
-  "name": "Ingros Giacenze",
+  "name": "Ingros",
+  "description": "Consultazione giacenze per agenti esterni Ingros",
   "icons": [
     {
       "src": "data/IngrosCoperture.jpg",
@@ -17,7 +18,10 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
   "orientation": "portrait",
+  "scope": "./",
   "theme_color": "#dc2626",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "lang": "it"
 }
