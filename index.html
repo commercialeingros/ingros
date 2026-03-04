@@ -9,6 +9,7 @@
     <meta name="apple-mobile-web-app-title" content="Ingros App">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
     
     <style>
         body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -225,57 +226,60 @@
             }
         }
 
-        // --- POP WEB APP INSTALLLAZIONE
-        let deferredPrompt;
+       // --- POP WEB APP INSTALLLAZIONE ---
+let deferredPrompt;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+const isEdgeAndroid = /EdgA/.test(navigator.userAgent);
 
-        // Rileva se è un iPhone/iPad
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-        const isEdgeAndroid = /EdgA/.test(navigator.userAgent); // Rileva Edge su Android
-        
-       
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-    
-            // Mostra il popup se l'app non è già installata
-            if (!isStandalone) {
-                showInstallPopup();
-            }
-        });
-
-    function showInstallPopup() {
-        const popup = document.getElementById('install-popup');
-        const text = document.getElementById('install-text');
-        const btn = document.getElementById('btn-install-app');
-    
-        popup.style.display = 'block';
-
-        if (isIOS) {
-            text.innerHTML = `Clicca <i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i> e <b>'Aggiungi a Home'</b>`;
-            btn.innerText = "Istruzioni";
-        } else if (isEdgeAndroid) {
-            text.innerHTML = `Clicca i 3 puntini <div class="menu-dots-wrapper"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="finger-tap-android"></div></div> e seleziona <b>'Aggiungi a telefono'</b>`;
-            btn.innerText = "Installa ora";
-        } else {
-            // Chrome Android standard
-            text.innerHTML = "Installa l'app per consultare le giacenze velocemente.";
-            btn.innerText = "Installa";
-        }
+// Gestione per Android/Chrome/Edge (Evento nativo)
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!isStandalone) {
+        showInstallPopup();
     }
+});
 
-    document.getElementById('btn-install-app').addEventListener('click', async () => {
-        if (isIOS || isEdgeAndroid && !deferredPrompt) {
-            alert(isIOS ? "Usa il menu di condivisione di Safari." : "Apri il menu di Edge (i tre puntini in basso o in alto) e cerca 'Aggiungi a telefono'.");
-        } else if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                document.getElementById('install-popup').style.display = 'none';
-            }
-            deferredPrompt = null;
+// Forza la visualizzazione su iOS o se il prompt automatico non arriva (dopo 3 secondi)
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        if (!isStandalone && !deferredPrompt) {
+            // Se dopo 3 sec non è installata e non è apparso il prompt nativo, lo forziamo noi
+            showInstallPopup();
         }
-    });
+    }, 3000);
+});
+
+function showInstallPopup() {
+    const popup = document.getElementById('install-popup');
+    const text = document.getElementById('install-text');
+    const btn = document.getElementById('btn-install-app');
+    
+    popup.style.display = 'block';
+
+    if (isIOS) {
+        // Animazione dito per iPhone
+        text.innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i><div class="finger-icon"></div></div> e <b>'Aggiungi a Home'</b>`;
+        btn.innerText = "Istruzioni";
+    } else if (isEdgeAndroid) {
+        // Animazione puntini per Edge
+        text.innerHTML = `Clicca i 3 puntini <div class="menu-dots-wrapper"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="finger-tap-android"></div></div> e seleziona <b>'Aggiungi'</b>`;
+        btn.innerText = "Installa";
+    }
+}
+
+document.getElementById('btn-install-app').addEventListener('click', async () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') document.getElementById('install-popup').style.display = 'none';
+        deferredPrompt = null;
+    } else {
+        // Messaggio di aiuto manuale
+        alert(isIOS ? "Premi il tasto di condivisione in basso e seleziona 'Aggiungi alla schermata Home'." : "Apri il menu del browser (3 puntini) e clicca su 'Installa' o 'Aggiungi a schermata home'.");
+    }
+});
 
        
         // --- CORE FUNCTIONS ---
@@ -490,6 +494,7 @@
     </script>
 </body>
 </html>
+
 
 
 
