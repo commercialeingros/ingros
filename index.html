@@ -194,7 +194,7 @@
             }
         }
 
-        // --- POP UP INSTALLAZIONE WEBAPP ---
+        // --- POP WEB APP INSTALLLAZIONE
         let deferredPrompt;
 
         // Rileva se è un iPhone/iPad
@@ -202,7 +202,7 @@
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Impedisce a Chrome di mostrare il suo banner grigio standard
+            // Impedisce a Chrome di mostrare il banner standard
             e.preventDefault();
             deferredPrompt = e;
     
@@ -214,30 +214,36 @@
 
         // Gestione click sul tasto Installa
         document.getElementById('btn-install-app').addEventListener('click', async () => {
+        const popup = document.getElementById('install-popup');
         if (isIOS) {
             // Su iOS spieghiamo come fare (non c'è installazione automatica)
             alert("Per installare su iPhone:\n1. Clicca il tasto 'Condividi' (il quadrato con la freccia in alto)\n2. Scorri e seleziona 'Aggiungi alla schermata Home'");
-            document.getElementById('install-popup').style.display = 'none';
+            popup.style.display = 'none';
         } else if (deferredPrompt) {
             // Su Android/Chrome PC avviamo l'installazione vera
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
                 console.log('App installata');
-                document.getElementById('install-popup').style.display = 'none';
+                popup.style.display = 'none';
             }
             deferredPrompt = null;
         }
     });
 
-// Se è iOS, mostriamo comunque il popup per guidarli
+// Se è iOS, mostriamo comunque il popup per guidarli e attiviamo l'animazione
 window.addEventListener('load', () => {
+    const popup = document.getElementById('install-popup');
     if (isIOS && !isStandalone) {
-        document.getElementById('install-popup').style.display = 'block';
-        document.getElementById('install-text').innerText = "Clicca 'Condividi' e 'Aggiungi alla home' per installare.";
+        popup.style.display = 'block';
+        document.getElementById('install-text').innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-square-arrow-up text-gray-400 text-lg"></i><div class="finger-icon"></div></div> e 'Aggiungi alla home' per installare.`;
         document.getElementById('btn-install-app').innerText = "Istruzioni";
     }
 });
+
+
+
+        
         // --- CORE FUNCTIONS ---
         async function switchTab(tab) {
             const btn = document.getElementById(`tab-${tab}`);
@@ -450,6 +456,7 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
+
 
 
 
