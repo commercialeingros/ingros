@@ -539,9 +539,15 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
             applyFilters();
             generateFilterUI();
         }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+            .then(() => console.log("Service Worker Registrato"));
+        }
     </script>
 </body>
 </html>
+
 
 
 
