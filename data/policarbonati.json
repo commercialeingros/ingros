@@ -386,6 +386,22 @@
     {
         "Articolo":  "PCAGATRA000017",
         "Descrizione":  "LASTRA POL. ALVE. GREC. 5 GRECHE H40 . MODULO 2 PARETI 2W SP. 2,5 mm NEUTRO P. 1000 MM P. UTILE 1000 MM",
+        "Unita_locale":  "Marene",
+        "UM_1":  "MQ",
+        "Quantita_1":  9,
+        "UM_2":  "PZ",
+        "Quantita_2":  6,
+        "Modello":  "LASTRA POL. ALVE. GREC. 5 GRECHE H40",
+        "Extramodello":  ".",
+        "Modulo":  "MODULO 2 PARETI 2W",
+        "Spessore":  "SP. 2,5 mm",
+        "Colore":  "NEUTRO",
+        "ProtezioneUV":  "PROTEZIONE",
+        "Lunghezza":  1500
+    },
+    {
+        "Articolo":  "PCAGATRA000017",
+        "Descrizione":  "LASTRA POL. ALVE. GREC. 5 GRECHE H40 . MODULO 2 PARETI 2W SP. 2,5 mm NEUTRO P. 1000 MM P. UTILE 1000 MM",
         "Unita_locale":  "Altedo",
         "UM_1":  "MQ",
         "Quantita_1":  7.5,
