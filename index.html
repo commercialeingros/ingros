@@ -254,52 +254,62 @@
             renderCards(filtered);
         }
 
-        function renderCards(data) {
-            const container = document.getElementById('card-list');
-            if (data.length === 0) {
-                container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato con questi filtri</div>`;
-                return;
-            }
+       function renderCards(data) {
+    const container = document.getElementById('card-list');
+    if (data.length === 0) {
+        container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato con questi filtri</div>`;
+        return;
+    }
 
-            container.innerHTML = data.map(item => {
-                const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
+    container.innerHTML = data.map(item => {
+        const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
+        
+        let details = '';
+        // Struttura unificata per tutte le tab: usiamo sempre una griglia a 2 colonne pulita
+        if (currentTab === 'policarbonati') {
+            details = `
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>
+                <div class="col-span-2 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Modulo</span><br>${item.Modulo || '-'}</div>
+            `;
+        } else if (currentTab === 'lam_grecate') {
+            details = `
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale</span><br>${item.Tipo_Materiale || '-'}</div>
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>
+                <div class="col-span-2 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>
+            `;
+        } else {
+            // Tab Copertura e Parete
+            details = `
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
+                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>
+                <div class="border-b pb-1 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || item.Colore || '-'}</div>
+                <div class="border-b pb-1 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Int.</span><br>${item.Colore_INT || '-'}</div>
+                <div class="pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Est (mm)</span><br>${item.SP_EST || '-'}</div>
+                <div class="pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Int (mm)</span><br>${item.SP_INT || '-'}</div>
+            `;
+        }
+
+        return `
+            <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100">
+                <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase shadow-sm">
+                    L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}
+                </div>
+                <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div>
+                <div class="text-[11px] text-gray-500 mb-1 italic">Art. ${item.Articolo}</div>
+                <div class="font-bold text-gray-800 text-sm leading-tight mb-4 pr-16 min-h-[2.5rem]">${item.Descrizione}</div>
                 
-                // Logica dettagli dinamici per card
-                let details = '';
-                if (currentTab === 'policarbonati') {
-                    details = `
-                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore:</span><br>${item.Spessore || '-'}</div>
-                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore:</span><br>${item.Colore || '-'}</div>
-                        <div class="col-span-2 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Modulo:</span><br>${item.Modulo || '-'}</div>
-                    `;
-                } else if (currentTab === 'lam_grecate') {
-                    details = `
-                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale:</span><br>${item.Tipo_Materiale || '-'}</div>
-                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore:</span><br>${item.Spessore || '-'}</div>
-                        <div class="col-span-2 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore:</span><br>${item.Colore || '-'}</div>
-                    `;
-                } else {
-                    details = `
-                         <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] bg-gray-50 p-2 rounded-lg border border-gray-100">
-                         <div><span class="text-gray-400 uppercase font-bold">Altezza:</span> ${item.Altezza || '-'}</div>
-                         <div><span class="text-gray-400 uppercase font-bold">Isolante:</span> ${item.Isolante || item.Spessore || '-'}</div>
-                    
-                        <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
-                            <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Est:</span><br>${item.Colore_EST || item.Colore || '-'}
-                        </div>
-                        <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
-                            <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Int:</span><br>${item.Colore_INT || '-'}
-                        </div>
+                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] bg-gray-50 p-3 rounded-lg border border-gray-100 font-medium text-gray-700">
+                    ${details}
+                </div>
 
-                        <div class="col-span-1 border-t border-gray-200 pt-1">
-                            <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Est (mm):</span><br>${item.SP_EST || '-'}
-                        </div>
-                        <div class="col-span-1 border-t border-gray-200 pt-1">
-                            <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Int (mm):</span><br>${item.SP_INT || '-'}
-                        </div>
-                    </div>
-                    `;
-                }
+                <button onclick="sendWA(${waArgs})" class="mt-4 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:scale-95 transition-transform shadow-md">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ
+                </button>
+            </div>
+        `;
+    }).join('');
+}
 
                 return `
                     <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative">
@@ -359,4 +369,5 @@
     </script>
 </body>
 </html>
+
 
