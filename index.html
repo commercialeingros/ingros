@@ -279,7 +279,8 @@ let deferredPrompt;
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 const isEdgeAndroid = /EdgA/.test(navigator.userAgent);
-
+const isEdge = /Edg/.test(navigator.userAgent);
+        
 // Gestione per Android/Chrome/Edge (Evento nativo)
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -541,6 +542,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
