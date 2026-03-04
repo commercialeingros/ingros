@@ -63,7 +63,38 @@
     animation: tap-ios 1.5s infinite; /* Avvia l'animazione */
     pointer-events: none; /* Non intercettare i click */
 }
-        
+       /* Animazione specifica per Android (Menu tre puntini) */
+.menu-dots-wrapper {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+}
+
+.dot {
+    width: 4px;
+    height: 4px;
+    background-color: #666;
+    border-radius: 50%;
+}
+
+.finger-tap-android {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background-color: rgba(220, 38, 38, 0.4);
+    border-radius: 50%;
+    animation: pulse-android 1.5s infinite;
+}
+
+@keyframes pulse-android {
+    0% { transform: scale(1); opacity: 0; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+} 
     </style>
 </head>
     
@@ -200,50 +231,53 @@
         // Rileva se è un iPhone/iPad
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-
+        const isEdgeAndroid = /EdgA/.test(navigator.userAgent); // Rileva Edge su Android
+        
+       
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Impedisce a Chrome di mostrare il banner standard
             e.preventDefault();
             deferredPrompt = e;
     
-            // Mostra il nostro popup personalizzato se non è già installata
+            // Mostra il popup se l'app non è già installata
             if (!isStandalone) {
-                document.getElementById('install-popup').style.display = 'block';
+                showInstallPopup();
             }
         });
 
-        // Gestione click sul tasto Installa
-        document.getElementById('btn-install-app').addEventListener('click', async () => {
+    function showInstallPopup() {
         const popup = document.getElementById('install-popup');
+        const text = document.getElementById('install-text');
+        const btn = document.getElementById('btn-install-app');
+    
+        popup.style.display = 'block';
+
         if (isIOS) {
-            // Su iOS spieghiamo come fare (non c'è installazione automatica)
-            alert("Per installare su iPhone:\n1. Clicca il tasto 'Condividi' (il quadrato con la freccia in alto)\n2. Scorri e seleziona 'Aggiungi alla schermata Home'");
-            popup.style.display = 'none';
+            text.innerHTML = `Clicca <i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i> e <b>'Aggiungi a Home'</b>`;
+            btn.innerText = "Istruzioni";
+        } else if (isEdgeAndroid) {
+            text.innerHTML = `Clicca i 3 puntini <div class="menu-dots-wrapper"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="finger-tap-android"></div></div> e seleziona <b>'Aggiungi a telefono'</b>`;
+            btn.innerText = "Installa ora";
+        } else {
+            // Chrome Android standard
+            text.innerHTML = "Installa l'app per consultare le giacenze velocemente.";
+            btn.innerText = "Installa";
+        }
+    }
+
+    document.getElementById('btn-install-app').addEventListener('click', async () => {
+        if (isIOS || isEdgeAndroid && !deferredPrompt) {
+            alert(isIOS ? "Usa il menu di condivisione di Safari." : "Apri il menu di Edge (i tre puntini in basso o in alto) e cerca 'Aggiungi a telefono'.");
         } else if (deferredPrompt) {
-            // Su Android/Chrome PC avviamo l'installazione vera
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
             if (outcome === 'accepted') {
-                console.log('App installata');
-                popup.style.display = 'none';
+                document.getElementById('install-popup').style.display = 'none';
             }
             deferredPrompt = null;
         }
     });
 
-// Se è iOS, mostriamo comunque il popup per guidarli e attiviamo l'animazione
-window.addEventListener('load', () => {
-    const popup = document.getElementById('install-popup');
-    if (isIOS && !isStandalone) {
-        popup.style.display = 'block';
-        document.getElementById('install-text').innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-square-arrow-up text-gray-400 text-lg"></i><div class="finger-icon"></div></div> e 'Aggiungi alla home' per installare.`;
-        document.getElementById('btn-install-app').innerText = "Istruzioni";
-    }
-});
-
-
-
-        
+       
         // --- CORE FUNCTIONS ---
         async function switchTab(tab) {
             const btn = document.getElementById(`tab-${tab}`);
@@ -456,6 +490,7 @@ window.addEventListener('load', () => {
     </script>
 </body>
 </html>
+
 
 
 
