@@ -280,10 +280,24 @@
                     `;
                 } else {
                     details = `
-                        <div class="col-span-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante:</span><br>${item.Altezza}mm ${item.Isolante}</div>
-                        <div class="col-span-1 text-right"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Est:</span><br>${item.SP_EST || '-'}</div>
-                        <div class="col-span-1 border-t pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est:</span><br>${item.Colore_EST || '-'}</div>
-                        <div class="col-span-1 border-t pt-1 text-right"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Int:</span><br>${item.Colore_INT || '-'}</div>
+                         <div class="grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] bg-gray-50 p-2 rounded-lg border border-gray-100">
+                         <div><span class="text-gray-400 uppercase font-bold">Altezza:</span> ${item.Altezza || '-'}</div>
+                         <div><span class="text-gray-400 uppercase font-bold">Isolante:</span> ${item.Isolante || item.Spessore || '-'}</div>
+                    
+                        <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
+                            <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Est:</span><br>${item.Colore_EST || item.Colore || '-'}
+                        </div>
+                        <div class="col-span-1 border-t border-gray-200 mt-1 pt-1">
+                            <span class="text-gray-400 uppercase font-bold text-[9px]">Colore Int:</span><br>${item.Colore_INT || '-'}
+                        </div>
+
+                        <div class="col-span-1 border-t border-gray-200 pt-1">
+                            <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Est (mm):</span><br>${item.SP_EST || '-'}
+                        </div>
+                        <div class="col-span-1 border-t border-gray-200 pt-1">
+                            <span class="text-gray-400 uppercase font-bold text-[9px]">Sp. Int (mm):</span><br>${item.SP_INT || '-'}
+                        </div>
+                    </div>
                     `;
                 }
 
@@ -345,3 +359,4 @@
     </script>
 </body>
 </html>
+
