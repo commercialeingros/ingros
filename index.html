@@ -344,11 +344,11 @@
         }
 
        // --- POP WEB APP INSTALLLAZIONE ---
-let deferredPrompt;
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-const isEdgeAndroid = /EdgA/.test(navigator.userAgent);
-const isEdge = /Edg/.test(navigator.userAgent);
+       let deferredPrompt;
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const isEdgeAndroid = /EdgA/.test(navigator.userAgent);
+        const isEdge = /Edg/.test(navigator.userAgent);
         
 // Gestione per Android/Chrome/Edge (Evento nativo)
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -666,10 +666,23 @@ function renderRubrica() {
         }
 
        
+        function toggleFilters() {
+            const modal = document.getElementById('filter-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
         function resetFilters() {
-            document.querySelectorAll('#filter-rows select').forEach(s => s.value = "");
-            applyFilters();
+            // Seleziona tutti i menu a tendina nei filtri e resettali
+            const selects = document.querySelectorAll('#filter-rows select');
+            selects.forEach(s => s.value = "");
+    
+            // Rigenera l'interfaccia e applica i cambiamenti
             generateFilterUI();
+            applyFilters();
         }
 
         if ('serviceWorker' in navigator) {
@@ -679,6 +692,7 @@ function renderRubrica() {
     </script>
 </body>
 </html>
+
 
 
 
