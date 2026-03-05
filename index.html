@@ -664,7 +664,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
         // --- INVIO WHATSAPP ---
         function sendWA(sede, art, desc, lung, pz) {
             const storico = `art lung pz`
-            addToHistory(art);
+            addToHistory(storico);
             const num = rubrica[sede] || "";
             if(!num || num === "000") {
                 return alert("Imposta il numero per " + sede + " nelle impostazioni.");
@@ -675,6 +675,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
