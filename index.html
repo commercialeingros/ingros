@@ -582,18 +582,26 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
         }
 
         function toggleSettings() {
-            const mod = document.getElementById('settings-modal');
+    const mod = document.getElementById('settings-modal');
     
-            if (mod.classList.contains('hidden')) {
-                // APERTURA: Nitida e immediata
-                renderRubrica();
-                renderHistory();
-                mod.classList.remove('hidden');
-            } else {
-                // CHIUSURA
-                mod.classList.add('hidden');
-            }
-        }
+    if (mod.classList.contains('hidden')) {
+        // Render dei dati prima di mostrare
+        renderRubrica();
+        renderHistory();
+        
+        // Togliamo hidden e dopo un micro-istante aggiungiamo active per l'animazione
+        mod.classList.remove('hidden');
+        setTimeout(() => {
+            mod.classList.add('active');
+        }, 10);
+    } else {
+        // Prima animiamo l'uscita, poi nascondiamo
+        mod.classList.remove('active');
+        setTimeout(() => {
+            mod.classList.add('hidden');
+        }, 300); // 300ms come la durata della transizione nel CSS
+    }
+}
 
         function toggleSubMenu(id) {
             const sub = document.getElementById(id);
@@ -656,6 +664,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
