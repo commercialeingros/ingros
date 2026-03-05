@@ -638,6 +638,7 @@ function renderRubrica() {
         addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
         originalSendWA(sede, art, desc, lung, pz);
     };
+        
         function originalSendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
             if(!num) return alert("Imposta il numero per " + sede + " nelle impostazioni.");
@@ -645,7 +646,6 @@ function renderRubrica() {
             const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
         }
-
         function toggleSettings() {
             const mod = document.getElementById('settings-modal');
             if (mod.classList.contains('hidden')) {
@@ -680,6 +680,7 @@ function renderRubrica() {
     </script>
 </body>
 </html>
+
 
 
 
