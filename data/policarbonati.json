@@ -4146,22 +4146,6 @@
     {
         "Articolo":  "PCAPITRA000037",
         "Descrizione":  "LASTRA POL. ALVEOLARE PIANO . MODULO 5 PARETI 5X SP. 16 mm NEUTRO P. 2100 MM P. UTILE 2100 MM",
-        "Unita_locale":  "Cincinnato",
-        "UM_1":  "MQ",
-        "Quantita_1":  6.3,
-        "UM_2":  "PZ",
-        "Quantita_2":  1,
-        "Modello":  "LASTRA POL. ALVEOLARE PIANO",
-        "Extramodello":  ".",
-        "Modulo":  "MODULO 5 PARETI 5X",
-        "Spessore":  "SP. 16 mm",
-        "Colore":  "NEUTRO",
-        "ProtezioneUV":  "PROTEZIONE",
-        "Lunghezza":  3000
-    },
-    {
-        "Articolo":  "PCAPITRA000037",
-        "Descrizione":  "LASTRA POL. ALVEOLARE PIANO . MODULO 5 PARETI 5X SP. 16 mm NEUTRO P. 2100 MM P. UTILE 2100 MM",
         "Unita_locale":  "Milano",
         "UM_1":  "MQ",
         "Quantita_1":  25.2,
