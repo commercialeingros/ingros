@@ -250,8 +250,8 @@
                 <div class="flex items-center gap-4">
                     <div class="bg-amber-100 text-amber-600 p-3 rounded-xl"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
                     <div class="text-left">
-                        <h3 class="font-bold text-gray-800">Storico Ricerche</h3>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Ultimi articoli visti</p>
+                        <h3 class="font-bold text-gray-800">Storico Richieste</h3>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Ultime richieste</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-down text-gray-300"></i>
@@ -663,7 +663,8 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
 
         // --- INVIO WHATSAPP ---
         function sendWA(sede, art, desc, lung, pz) {
-            addToHistory(desc);
+            const storico = `art lung pz`
+            addToHistory(art);
             const num = rubrica[sede] || "";
             if(!num || num === "000") {
                 return alert("Imposta il numero per " + sede + " nelle impostazioni.");
@@ -674,6 +675,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
