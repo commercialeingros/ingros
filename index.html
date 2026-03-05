@@ -191,15 +191,21 @@
 
         <header class="bg-white shadow-md sticky top-0 z-40 p-4">
             <div class="flex justify-between items-center">
-                <div>
-                    <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
-                    <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
-                </div>
-                <div class="flex gap-4 items-center">
-                    <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-bars text-2xl"></i></button>
-                   
-                </div>
+            <div>
+            <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
+            <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
             </div>
+            <div class="flex gap-4 items-center">
+            <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+            
+            <button onclick="toggleFilters()" class="relative bg-red-600 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform">
+                <i class="fa-solid fa-sliders"></i>
+                <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
+            </button>
+            </div>
+        </div>
         </header>
 
         <main id="card-list" class="p-3 space-y-3"></main>
@@ -664,6 +670,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
