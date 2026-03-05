@@ -411,7 +411,10 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
                 generateFilterUI();
                 applyFilters();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (err) { alert("Errore caricamento dati."); }
+            } catch (err) { 
+                console.error(err);
+                alert("Errore caricamento dati: " + err.message + " su file: " + tab); 
+            }
             finally { setTimeout(() => spinner.classList.add('hidden'), 300); }
         }
 
@@ -661,6 +664,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
