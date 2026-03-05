@@ -148,13 +148,6 @@
             100% { transform: scale(2); opacity: 0; }
         } 
 
-        /* Effetto Blur sullo sfondo */
-        #app-content.blur-active {
-            filter: blur(8px);
-            transition: filter 0.3s ease;
-            pointer-events: none; /* Impedisce di cliccare dietro il menu */
-        }
-
         /* Transizione fluida per il modal impostazioni */
         #settings-modal {
             transition: all 0.3s ease-in-out;
@@ -590,20 +583,15 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
 
         function toggleSettings() {
             const mod = document.getElementById('settings-modal');
-            const appContent = document.getElementById('app-content');
     
             if (mod.classList.contains('hidden')) {
-                // APERTURA
+                // APERTURA: Nitida e immediata
                 renderRubrica();
                 renderHistory();
                 mod.classList.remove('hidden');
-                setTimeout(() => mod.classList.add('active'), 10);
-                appContent.classList.add('blur-active');
             } else {
                 // CHIUSURA
-                mod.classList.remove('active');
-                appContent.classList.remove('blur-active');
-                setTimeout(() => mod.classList.add('hidden'), 300);
+                mod.classList.add('hidden');
             }
         }
 
@@ -668,6 +656,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
