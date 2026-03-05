@@ -633,7 +633,6 @@ function renderRubrica() {
 }
 
     // Modifica la funzione sendWA esistente per salvare nello storico
-    const originalSendWA = sendWA;
     function sendWA(sede, art, desc, lung, pz) {
         addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
         originalSendWA(sede, art, desc, lung, pz);
@@ -680,6 +679,7 @@ function renderRubrica() {
     </script>
 </body>
 </html>
+
 
 
 
