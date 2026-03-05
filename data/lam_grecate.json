@@ -7218,6 +7218,24 @@
         "Cod_Materiale":  "F03"
     },
     {
+        "Modello":  "SILMA 28",
+        "Tipo_Materiale":  "ALLUMINIO 3105",
+        "Cod_Colore":  "003",
+        "Colore":  "ALLUMINIO NATURALE",
+        "Spessore":  "SP. 0,8 mm",
+        "Lunghezza":  6500,
+        "Quantita_1":  11,
+        "UM_1":  "PZ",
+        "Quantita_2":  72.215,
+        "UM_2":  "MQ",
+        "Unita_locale":  "Marene",
+        "Lavorazione":  ".",
+        "Anticondensa":  ".",
+        "Descrizione":  "LASTRA GRECATA SILMA 28 PASSO LORDO 1010 mm ALL NAT SP. 8/10 ALLUMINIO",
+        "Articolo":  "LGICH2P0004862",
+        "Cod_Materiale":  "A07"
+    },
+    {
         "Modello":  "MULTISILMA",
         "Tipo_Materiale":  "ACCIAIO FE S250GD",
         "Cod_Colore":  "TDM",
@@ -12994,6 +13012,24 @@
         "Descrizione":  "LASTRA GRECATA SILMA 6 PASSO LORDO 1065 mm 3009 SIMIL RSI SP. 7/10 ALLUMINIO LAV. TACCHETTATURA CON TESSUTO ANTIC.SA",
         "Articolo":  "LGICSL60003285",
         "Cod_Materiale":  "A07"
+    },
+    {
+        "Modello":  "SILMA 6",
+        "Tipo_Materiale":  "ACCIAIO FE S250GD",
+        "Cod_Colore":  "017",
+        "Colore":  "BIANCO PURO RAL 9010",
+        "Spessore":  "SP. 0,6 mm",
+        "Lunghezza":  2800,
+        "Quantita_1":  180,
+        "UM_1":  "PZ",
+        "Quantita_2":  536.76,
+        "UM_2":  "MQ",
+        "Unita_locale":  "Marene",
+        "Lavorazione":  ".",
+        "Anticondensa":  ".",
+        "Descrizione":  "LASTRA GRECATA SILMA 6 PASSO LORDO 1065 mm BIA 9010 SP. 6/10 LAMIERA",
+        "Articolo":  "LGICSL60003299",
+        "Cod_Materiale":  "F03"
     },
     {
         "Modello":  "SILMA 6",
