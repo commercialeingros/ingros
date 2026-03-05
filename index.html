@@ -21,129 +21,151 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .animate-spin { animation: spin 1s linear infinite; }
 
-        /* Stile del Popup di Installazione */
-    /* Stile del Popup di Installazione iOS/Android */
-#install-popup {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    background: white;
-    z-index: 200;
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    border: 2px solid #dc2626;
-}
+       
+        /* Stile del Popup di Installazione iOS/Android */
+        #install-popup {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            z-index: 200;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 2px solid #dc2626;
+        }
 
         /* Assicuriamoci che il popup sia sopra a tutto */
-#install-popup {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-    background: white;
-    z-index: 200; /* Più alto del login-screen */
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    border: 2px solid #dc2626;
-}
+        #install-popup {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: white;
+            z-index: 200; /* Più alto del login-screen */
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 2px solid #dc2626;
+        }
 
-/* Animazione per Edge (3 linee orizzontali) */
-.menu-edge-wrapper {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    gap: 3px;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    padding: 4px;
-    background: #f3f4f6;
-    border-radius: 4px;
-}
-.line-edge {
-    width: 16px;
-    height: 2px;
-    background-color: #333;
-}
+        /* Animazione per Edge (3 linee orizzontali) */
+        .menu-edge-wrapper {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 3px;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            padding: 4px;
+            background: #f3f4f6;
+            border-radius: 4px;
+        }
+        
+        .line-edge {
+            width: 16px;
+            height: 2px;
+            background-color: #333;
+        }
 
-.finger-tap-edge {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    background-color: rgba(220, 38, 38, 0.4);
-    border-radius: 50%;
-    animation: pulse-edge 1.5s infinite;
-}
+        .finger-tap-edge {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: rgba(220, 38, 38, 0.4);
+            border-radius: 50%;
+            animation: pulse-edge 1.5s infinite;
+        }
 
-@keyframes pulse-edge {
-    0% { transform: scale(1); opacity: 0; }
-    50% { transform: scale(1.4); opacity: 1; }
-    100% { transform: scale(1.8); opacity: 0; }
-}
-/* Animazione del Dito che Clicca */
-@keyframes tap-ios {
-    0% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
-    20% { transform: scale(1.1) translate(-50%, -50%); opacity: 1; }
-    80% { transform: scale(0.9) translate(-50%, -50%); opacity: 1; }
-    100% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
-}
+        @keyframes pulse-edge {
+            0% { transform: scale(1); opacity: 0; }
+            50% { transform: scale(1.4); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+        
+        /* Animazione del Dito che Clicca */
+        @keyframes tap-ios {
+            0% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
+            20% { transform: scale(1.1) translate(-50%, -50%); opacity: 1; }
+            80% { transform: scale(0.9) translate(-50%, -50%); opacity: 1; }
+            100% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
+        }
 
-.share-icon-wrapper {
-    position: relative;
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-}
+        .share-icon-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+        }
 
-.finger-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    background-color: rgba(255, 0, 0, 0.5); /* Dito semitrasparente rosso */
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: tap-ios 1.5s infinite; /* Avvia l'animazione */
-    pointer-events: none; /* Non intercettare i click */
-}
+        .finger-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 0, 0, 0.5); /* Dito semitrasparente rosso */
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: tap-ios 1.5s infinite; /* Avvia l'animazione */
+            pointer-events: none; /* Non intercettare i click */
+        }
+        
        /* Animazione specifica per Android (Menu tre puntini) */
-.menu-dots-wrapper {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    gap: 2px;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-}
+       .menu-dots-wrapper {
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            gap: 2px;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
 
-.dot {
-    width: 4px;
-    height: 4px;
-    background-color: #666;
-    border-radius: 50%;
-}
+        .dot {
+            width: 4px;
+            height: 4px;
+            background-color: #666;
+            border-radius: 50%;
+        }
 
-.finger-tap-android {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background-color: rgba(220, 38, 38, 0.4);
-    border-radius: 50%;
-    animation: pulse-android 1.5s infinite;
-}
+        .finger-tap-android {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: rgba(220, 38, 38, 0.4);
+            border-radius: 50%;
+            animation: pulse-android 1.5s infinite;
+        }
 
-@keyframes pulse-android {
-    0% { transform: scale(1); opacity: 0; }
-    50% { transform: scale(1.5); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
-} 
+        @keyframes pulse-android {
+            0% { transform: scale(1); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        } 
+
+        /* Effetto Blur sullo sfondo */
+        #app-content.blur-active {
+            filter: blur(8px);
+            transition: filter 0.3s ease;
+            pointer-events: none; /* Impedisce di cliccare dietro il menu */
+        }
+
+        /* Transizione fluida per il modal impostazioni */
+        #settings-modal {
+            transition: all 0.3s ease-in-out;
+            transform: translateY(100%);
+        }
+        
+        #settings-modal.active {
+            transform: translateY(0);
+            display: block !important;
+        }
+        
     </style>
 </head>
     
@@ -204,16 +226,63 @@
         </div>
 
         <div id="settings-modal" class="fixed inset-0 bg-white z-[70] hidden p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-black">IMPOSTAZIONI</h2>
-                <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
-            </div>
-            <div class="space-y-6">
-                <h3 class="font-bold border-b pb-2 tracking-tight">RUBRICA UNITÀ LOCALI</h3>
-                <div id="rubrica-list" class="space-y-4"></div>
-                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold shadow-lg">SALVA CONFIGURAZIONE</button>
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black uppercase tracking-tight">Impostazioni</h2>
+        <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
+    </div>
+
+    <div class="space-y-4">
+        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+            <button onclick="toggleSubMenu('submenu-rubrica')" class="w-full flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="bg-red-100 text-red-600 p-3 rounded-xl"><i class="fa-solid fa-address-book text-xl"></i></div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-gray-800">Rubrica Unità Locali</h3>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">WhatsApp Sedi</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down text-gray-300"></i>
+            </button>
+            <div id="submenu-rubrica" class="hidden mt-6 space-y-4 border-t pt-4">
+                <div id="rubrica-list" class="space-y-4 text-sm"></div>
+                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold shadow-md">SALVA</button>
             </div>
         </div>
+
+        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+            <button onclick="toggleSubMenu('submenu-storico')" class="w-full flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="bg-amber-100 text-amber-600 p-3 rounded-xl"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
+                    <div class="text-left">
+                        <h3 class="font-bold text-gray-800">Storico Ricerche</h3>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Ultimi articoli visti</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-down text-gray-300"></i>
+            </button>
+            <div id="submenu-storico" class="hidden mt-4 border-t pt-4">
+                <div id="history-list" class="space-y-2 text-xs text-gray-600 italic">
+                    Nessun articolo nello storico.
+                </div>
+            </div>
+        </div>
+
+        <a href="http://www.upmisolpack.altervista.org/disegnitecnici/" target="_blank" class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-xl"><i class="fa-solid fa-gears text-xl"></i></div>
+                <div class="text-left">
+                    <h3 class="font-bold text-gray-800">Sezione Tecnica</h3>
+                    <p class="text-[10px] text-gray-500 uppercase font-bold">Disegni e Schede</p>
+                </div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square text-gray-300 text-sm"></i>
+        </a>
+    </div>
+
+    <button onclick="location.reload()" class="mt-12 w-full text-gray-400 font-bold text-[10px] uppercase tracking-widest border-2 border-gray-100 py-4 rounded-2xl">
+        Esci dall'Account
+    </button>
+</div>
 
         <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
             <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
@@ -506,10 +575,73 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
  
 
         // --- UTILS ---
-        function sendWA(sede, art, desc, lung, pz) {
+        let searchHistory = JSON.parse(localStorage.getItem('ingros_history')) || [];
+
+        function toggleSettings() {
+            const mod = document.getElementById('settings-modal');
+            const appContent = document.getElementById('app-content');
+    
+            if (mod.classList.contains('hidden')) {
+                // APERTURA
+                renderRubrica();
+                renderHistory();
+                mod.classList.remove('hidden');
+                setTimeout(() => mod.classList.add('active'), 10);
+                appContent.classList.add('blur-active');
+            } else {
+                // CHIUSURA
+                mod.classList.remove('active');
+                appContent.classList.remove('blur-active');
+                setTimeout(() => mod.classList.add('hidden'), 300);
+            }
+        }
+
+function toggleSubMenu(id) {
+    const sub = document.getElementById(id);
+    sub.classList.toggle('hidden');
+}
+
+// Funzione per salvare nello storico (da chiamare quando si clicca su un articolo o WhatsApp)
+function addToHistory(desc) {
+    if (!searchHistory.includes(desc)) {
+        searchHistory.unshift(desc); // Aggiungi all'inizio
+        if (searchHistory.length > 5) searchHistory.pop(); // Tieni solo gli ultimi 5
+        localStorage.setItem('ingros_history', JSON.stringify(searchHistory));
+    }
+}
+
+function renderHistory() {
+    const container = document.getElementById('history-list');
+    if (searchHistory.length === 0) {
+        container.innerHTML = "Nessun articolo recente.";
+        return;
+    }
+    container.innerHTML = searchHistory.map(item => `
+        <div class="bg-white p-2 rounded-lg border border-gray-100 truncate">
+            ${item}
+        </div>
+    `).join('');
+}
+
+function renderRubrica() {
+    document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
+        <div class="flex flex-col gap-1">
+            <label class="text-[9px] font-bold text-gray-400 uppercase">${s}</label>
+            <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border-2 p-2 rounded-xl bg-gray-50 font-bold text-gray-700">
+        </div>
+    `).join('');
+}
+
+// Modifica la funzione sendWA esistente per salvare nello storico
+const originalSendWA = sendWA;
+function sendWA(sede, art, desc, lung, pz) {
+    addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
+    originalSendWA(sede, art, desc, lung, pz);
+};
+        function originalSendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
             if(!num) return alert("Imposta il numero per " + sede + " nelle impostazioni.");
-            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome}`;
+            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome ${currentUser.cognome}`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
         }
 
@@ -547,6 +679,7 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
     </script>
 </body>
 </html>
+
 
 
 
