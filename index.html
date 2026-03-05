@@ -632,16 +632,17 @@ function renderRubrica() {
     `).join('');
 }
 
-// Modifica la funzione sendWA esistente per salvare nello storico
-const originalSendWA = sendWA;
-function sendWA(sede, art, desc, lung, pz) {
-    addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
-    originalSendWA(sede, art, desc, lung, pz);
-};
+    // Modifica la funzione sendWA esistente per salvare nello storico
+    const originalSendWA = sendWA;
+    function sendWA(sede, art, desc, lung, pz) {
+        addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
+        originalSendWA(sede, art, desc, lung, pz);
+    };
         function originalSendWA(sede, art, desc, lung, pz) {
             const num = rubrica[sede] || "";
             if(!num) return alert("Imposta il numero per " + sede + " nelle impostazioni.");
-            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome ${currentUser.cognome}`;
+            // CORRETTO: Aggiunta parentesi graffa chiusa dopo currentUser.nome
+            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
         }
 
@@ -665,7 +666,7 @@ function sendWA(sede, art, desc, lung, pz) {
             toggleSettings();
         }
 
-        function toggleFilters() { document.getElementById('filter-modal').classList.toggle('hidden'); }
+       
         function resetFilters() {
             document.querySelectorAll('#filter-rows select').forEach(s => s.value = "");
             applyFilters();
@@ -679,6 +680,7 @@ function sendWA(sede, art, desc, lung, pz) {
     </script>
 </body>
 </html>
+
 
 
 
