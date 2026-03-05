@@ -574,8 +574,19 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
 
  
 
-        // --- UTILS ---
-        let searchHistory = JSON.parse(localStorage.getItem('ingros_history')) || [];
+       // --- FUNZIONI DI CONTROLLO INTERFACCIA ---
+        
+        function toggleFilters() {
+            const modal = document.getElementById('filter-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function resetFilters() {
+            const selects = document.querySelectorAll('#filter-rows select');
+            selects.forEach(s => s.value = "");
+            generateFilterUI();
+            applyFilters();
+        }
 
         function toggleSettings() {
             const mod = document.getElementById('settings-modal');
@@ -596,102 +607,68 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
             }
         }
 
-function toggleSubMenu(id) {
-    const sub = document.getElementById(id);
-    sub.classList.toggle('hidden');
-}
-
-// Funzione per salvare nello storico (da chiamare quando si clicca su un articolo o WhatsApp)
-function addToHistory(desc) {
-    if (!searchHistory.includes(desc)) {
-        searchHistory.unshift(desc); // Aggiungi all'inizio
-        if (searchHistory.length > 5) searchHistory.pop(); // Tieni solo gli ultimi 5
-        localStorage.setItem('ingros_history', JSON.stringify(searchHistory));
-    }
-}
-
-function renderHistory() {
-    const container = document.getElementById('history-list');
-    if (searchHistory.length === 0) {
-        container.innerHTML = "Nessun articolo recente.";
-        return;
-    }
-    container.innerHTML = searchHistory.map(item => `
-        <div class="bg-white p-2 rounded-lg border border-gray-100 truncate">
-            ${item}
-        </div>
-    `).join('');
-}
-
-function renderRubrica() {
-    document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
-        <div class="flex flex-col gap-1">
-            <label class="text-[9px] font-bold text-gray-400 uppercase">${s}</label>
-            <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border-2 p-2 rounded-xl bg-gray-50 font-bold text-gray-700">
-        </div>
-    `).join('');
-}
-
-    // Modifica la funzione sendWA esistente per salvare nello storico
-    function sendWA(sede, art, desc, lung, pz) {
-        addToHistory(desc); // Salva nello storico quando viene fatta una richiesta
-        originalSendWA(sede, art, desc, lung, pz);
-    };
-        
-        function originalSendWA(sede, art, desc, lung, pz) {
-            const num = rubrica[sede] || "";
-            if(!num) return alert("Imposta il numero per " + sede + " nelle impostazioni.");
-            // CORRETTO: Aggiunta parentesi graffa chiusa dopo currentUser.nome
-            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`;
-            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
-        }
-        function toggleSettings() {
-            const mod = document.getElementById('settings-modal');
-            if (mod.classList.contains('hidden')) {
-                document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
-                    <div class="flex flex-col gap-1">
-                        <label class="text-[10px] font-bold text-gray-400 uppercase">${s}</label>
-                        <input type="text" value="${rubrica[s]}" data-sede="${s}" class="border-2 p-3 rounded-xl bg-gray-50 font-bold text-gray-700">
-                    </div>
-                `).join('');
-                mod.classList.remove('hidden');
-            } else mod.classList.add('hidden');
+        function toggleSubMenu(id) {
+            const sub = document.getElementById(id);
+            sub.classList.toggle('hidden');
         }
 
-        function saveRubrica() {
-            document.querySelectorAll('#rubrica-list input').forEach(i => rubrica[i.dataset.sede] = i.value);
-            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
-            alert("Rubrica aggiornata!");
-            toggleSettings();
-        }
+        // --- GESTIONE STORICO E RUBRICA ---
+        let searchHistory = JSON.parse(localStorage.getItem('ingros_history')) || [];
 
-       
-        function toggleFilters() {
-            const modal = document.getElementById('filter-modal');
-            if (modal.classList.contains('hidden')) {
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
+        function addToHistory(desc) {
+            if (!searchHistory.includes(desc)) {
+                searchHistory.unshift(desc); 
+                if (searchHistory.length > 5) searchHistory.pop(); 
+                localStorage.setItem('ingros_history', JSON.stringify(searchHistory));
             }
         }
 
-        function resetFilters() {
-            // Seleziona tutti i menu a tendina nei filtri e resettali
-            const selects = document.querySelectorAll('#filter-rows select');
-            selects.forEach(s => s.value = "");
-    
-            // Rigenera l'interfaccia e applica i cambiamenti
-            generateFilterUI();
-            applyFilters();
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            if (searchHistory.length === 0) {
+                container.innerHTML = "Nessun articolo recente.";
+                return;
+            }
+            container.innerHTML = searchHistory.map(item => `
+                <div class="bg-white p-2 rounded-lg border border-gray-100 truncate mb-1">
+                    ${item}
+                </div>
+            `).join('');
         }
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(() => console.log("Service Worker Registrato"));
+        function renderRubrica() {
+            document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
+                <div class="flex flex-col gap-1">
+                    <label class="text-[9px] font-bold text-gray-400 uppercase">${s}</label>
+                    <input type="text" value="${rubrica[s]}" data-sede="${s}" 
+                           class="border-2 p-2 rounded-xl bg-gray-50 font-bold text-gray-700 outline-none focus:border-red-600">
+                </div>
+            `).join('');
+        }
+
+        function saveRubrica() {
+            const inputs = document.querySelectorAll('#rubrica-list input');
+            inputs.forEach(i => {
+                rubrica[i.dataset.sede] = i.value;
+            });
+            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
+            alert("Rubrica salvata correttamente!");
+        }
+
+        // --- INVIO WHATSAPP ---
+        function sendWA(sede, art, desc, lung, pz) {
+            addToHistory(desc);
+            const num = rubrica[sede] || "";
+            if(!num || num === "000") {
+                return alert("Imposta il numero per " + sede + " nelle impostazioni.");
+            }
+            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
         }
     </script>
 </body>
 </html>
+
 
 
 
