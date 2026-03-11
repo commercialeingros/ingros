@@ -375,8 +375,7 @@
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>
 
-                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Est.</span><br>${item.SP_EST || '-'}</div>
-                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Int.</span><br>${item.SP_INT || '-'}</div>
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessori (E/I)</span><br>${item.SP_EST || '0'} / ${item.SP_INT || '0'}</div>
                     `;
                 }
 
@@ -424,4 +423,5 @@
     </script>
 </body>
 </html>
+
 
