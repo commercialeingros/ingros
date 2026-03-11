@@ -371,9 +371,10 @@
                 } else {
                     // CATEGORIE COPERTURA E PARETE: AGGIUNTI I CAMPI RICHIESTI
                     details = `
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || '-'}</div>
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>
-                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || '-'}</div>
+
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Est.</span><br>${item.SP_EST || '-'}</div>
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Int.</span><br>${item.SP_INT || '-'}</div>
                     `;
@@ -423,3 +424,4 @@
     </script>
 </body>
 </html>
+
