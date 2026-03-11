@@ -112,8 +112,14 @@
 <body class="bg-gray-100 pb-24">
 
     <div id="splash-screen">
-        <img src="data/IngrosCoperture.jpg" class="w-64 pulse-logo mb-6 rounded-lg shadow-lg" onerror="this.src='https://via.placeholder.com/200?text=INGROS'">
-        <div class="w-8 h-8 border-4 border-gray-100 border-t-red-600 rounded-full animate-spin"></div>
+        <img src="data/IngrosCoperture.jpg" class="splash-logo rounded-2xl" onerror="this.src='https://via.placeholder.com/200?text=INGROS'">
+        <div class="loader-container">
+            <div class="loader-bar"></div>
+        </div>
+        <div class="loader-text">Inizializzazione Dati...</div>
+        <div class="absolute bottom-10 text-[10px] text-slate-500 font-bold tracking-[3px] uppercase">
+            Autore Marco Zaina
+        </div>
     </div>
 
     <div id="install-popup">
@@ -465,6 +471,7 @@
     </script>
 </body>
 </html>
+
 
 
 
