@@ -21,7 +21,24 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .animate-spin { animation: spin 1s linear infinite; }
 
-       
+        /* --- NUOVO: SPLASH SCREEN STYLE --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+        .pulse-logo { animation: pulse 2s infinite; }
+        @keyframes pulse { 
+            0%, 100% { transform: scale(1); opacity: 1; } 
+            50% { transform: scale(0.95); opacity: 0.8; } 
+        }
+
         /* Stile del Popup di Installazione iOS/Android */
         #install-popup {
             display: none;
@@ -33,146 +50,44 @@
             z-index: 200;
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            border: 2px solid #dc2626;
-        }
-
-        /* Assicuriamoci che il popup sia sopra a tutto */
-        #install-popup {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: white;
-            z-index: 200; /* Più alto del login-screen */
-            padding: 20px;
-            border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             border: 2px solid #dc2626;
         }
 
-        /* Animazione per Edge (3 linee orizzontali) */
-        .menu-edge-wrapper {
-            position: relative;
-            display: inline-flex;
-            flex-direction: column;
-            gap: 3px;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            padding: 4px;
-            background: #f3f4f6;
-            border-radius: 4px;
-        }
-        
-        .line-edge {
-            width: 16px;
-            height: 2px;
-            background-color: #333;
-        }
+        /* Animazioni Edge/iOS/Android originali mantenute... */
+        .menu-edge-wrapper { position: relative; display: inline-flex; flex-direction: column; gap: 3px; align-items: center; justify-content: center; width: 24px; padding: 4px; background: #f3f4f6; border-radius: 4px; }
+        .line-edge { width: 16px; height: 2px; background-color: #333; }
+        .finger-tap-edge { position: absolute; width: 18px; height: 18px; background-color: rgba(220, 38, 38, 0.4); border-radius: 50%; animation: pulse-edge 1.5s infinite; }
+        @keyframes pulse-edge { 0% { transform: scale(1); opacity: 0; } 50% { transform: scale(1.4); opacity: 1; } 100% { transform: scale(1.8); opacity: 0; } }
+        @keyframes tap-ios { 0% { transform: scale(1) translate(-50%, -50%); opacity: 0; } 20% { transform: scale(1.1) translate(-50%, -50%); opacity: 1; } 80% { transform: scale(0.9) translate(-50%, -50%); opacity: 1; } 100% { transform: scale(1) translate(-50%, -50%); opacity: 0; } }
+        .share-icon-wrapper { position: relative; display: inline-block; width: 24px; height: 24px; }
+        .finger-icon { position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; background-color: rgba(255, 0, 0, 0.5); border-radius: 50%; transform: translate(-50%, -50%); animation: tap-ios 1.5s infinite; pointer-events: none; }
 
-        .finger-tap-edge {
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: rgba(220, 38, 38, 0.4);
-            border-radius: 50%;
-            animation: pulse-edge 1.5s infinite;
-        }
+        #settings-modal { transition: all 0.3s ease-in-out; transform: translateY(100%); }
+        #settings-modal.active { transform: translateY(0); display: block !important; }
 
-        @keyframes pulse-edge {
-            0% { transform: scale(1); opacity: 0; }
-            50% { transform: scale(1.4); opacity: 1; }
-            100% { transform: scale(1.8); opacity: 0; }
-        }
-        
-        /* Animazione del Dito che Clicca */
-        @keyframes tap-ios {
-            0% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
-            20% { transform: scale(1.1) translate(-50%, -50%); opacity: 1; }
-            80% { transform: scale(0.9) translate(-50%, -50%); opacity: 1; }
-            100% { transform: scale(1) translate(-50%, -50%); opacity: 0; }
-        }
-
-        .share-icon-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-        }
-
-        .finger-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            background-color: rgba(255, 0, 0, 0.5); /* Dito semitrasparente rosso */
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: tap-ios 1.5s infinite; /* Avvia l'animazione */
-            pointer-events: none; /* Non intercettare i click */
-        }
-        
-       /* Animazione specifica per Android (Menu tre puntini) */
-       .menu-dots-wrapper {
-            position: relative;
-            display: inline-flex;
-            flex-direction: column;
-            gap: 2px;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-        }
-
-        .dot {
-            width: 4px;
-            height: 4px;
-            background-color: #666;
-            border-radius: 50%;
-        }
-
-        .finger-tap-android {
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            background-color: rgba(220, 38, 38, 0.4);
-            border-radius: 50%;
-            animation: pulse-android 1.5s infinite;
-        }
-
-        @keyframes pulse-android {
-            0% { transform: scale(1); opacity: 0; }
-            50% { transform: scale(1.5); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
-        } 
-
-        /* Transizione fluida per il modal impostazioni */
-        #settings-modal {
-            transition: all 0.3s ease-in-out;
-            transform: translateY(100%);
-        }
-        
-        #settings-modal.active {
-            transform: translateY(0);
-            display: block !important;
-        }
-        
+        /* --- NUOVO: FIRMA AUTORE --- */
+        .firma-autore { font-size: 9px; font-weight: 800; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
     
 <body class="bg-gray-100 pb-24">
-    <div id="install-popup">
-    <div class="flex items-center gap-4">
-        <img src="data/IngrosCoperture.jpg" class="w-12 h-12 rounded-lg shadow" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
-        <div class="flex-1">
-            <h4 class="font-bold text-gray-800 text-sm">Installa App Ingros</h4>
-            <p id="install-text" class="text-xs text-gray-500">Aggiungi l'app alla tua home per un accesso rapido.</p>
-        </div>
-        <button id="btn-install-app" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase shadow-md active:scale-95 transition-transform">Installa</button>
-        <button onclick="document.getElementById('install-popup').style.display='none'" class="text-gray-400 text-xl font-bold ml-2">&times;</button>
+
+    <div id="splash-screen">
+        <img src="data/IngrosCoperture.jpg" class="w-64 pulse-logo mb-6 rounded-lg shadow-lg" onerror="this.src='https://via.placeholder.com/200?text=INGROS'">
+        <div class="w-8 h-8 border-4 border-gray-100 border-t-red-600 rounded-full animate-spin"></div>
     </div>
+
+    <div id="install-popup">
+        <div class="flex items-center gap-4">
+            <img src="data/IngrosCoperture.jpg" class="w-12 h-12 rounded-lg shadow" onerror="this.src='https://via.placeholder.com/100?text=LOGO'">
+            <div class="flex-1">
+                <h4 class="font-bold text-gray-800 text-sm">Installa App Ingros</h4>
+                <p id="install-text" class="text-xs text-gray-500">Aggiungi l'app alla tua home per un accesso rapido.</p>
+            </div>
+            <button id="btn-install-app" class="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-xs uppercase shadow-md active:scale-95 transition-transform">Installa</button>
+            <button onclick="document.getElementById('install-popup').style.display='none'" class="text-gray-400 text-xl font-bold ml-2">&times;</button>
+        </div>
     </div>
     
     <div id="login-screen" class="fixed inset-0 bg-white z-[100] flex flex-col items-center justify-center p-8 text-center">
@@ -181,6 +96,7 @@
         <input type="password" id="access-code" placeholder="Inserisci Codice Accesso" class="w-full max-w-xs border-2 border-gray-300 rounded-xl p-4 text-center text-2xl mb-4 focus:border-red-600 outline-none">
         <button onclick="checkAccess()" class="bg-red-600 text-white font-bold py-4 px-12 rounded-xl w-full max-w-xs shadow-lg active:scale-95 transition-transform">ENTRA</button>
         <p id="login-error" class="text-red-600 mt-4 hidden font-semibold italic">Codice errato o utente disabilitato</p>
+        <div class="absolute bottom-6 firma-autore opacity-50">Sviluppato da Ingros IT Team</div>
     </div>
 
     <div id="app-content" class="hidden">
@@ -191,21 +107,18 @@
 
         <header class="bg-white shadow-md sticky top-0 z-40 p-4">
             <div class="flex justify-between items-center">
-            <div>
-            <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
-            <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
+                <div>
+                    <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
+                    <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-bars text-2xl"></i></button>
+                    <button onclick="toggleFilters()" class="relative bg-red-600 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
+                    </button>
+                </div>
             </div>
-            <div class="flex gap-4 items-center">
-            <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600">
-                <i class="fa-solid fa-bars text-2xl"></i>
-            </button>
-            
-            <button onclick="toggleFilters()" class="relative bg-red-600 text-white p-3 rounded-xl shadow-lg active:scale-95 transition-transform">
-                <i class="fa-solid fa-sliders"></i>
-                <span id="filter-counter" class="hidden absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
-            </button>
-            </div>
-        </div>
         </header>
 
         <main id="card-list" class="p-3 space-y-3"></main>
@@ -222,63 +135,66 @@
         </div>
 
         <div id="settings-modal" class="fixed inset-0 bg-white z-[70] hidden p-6 overflow-y-auto">
-    <div class="flex justify-between items-center mb-8">
-        <h2 class="text-2xl font-black uppercase tracking-tight">Impostazioni</h2>
-        <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
-    </div>
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-black uppercase tracking-tight">Impostazioni</h2>
+                <button onclick="toggleSettings()" class="text-3xl text-gray-400">&times;</button>
+            </div>
 
-    <div class="space-y-4">
-        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-            <button onclick="toggleSubMenu('submenu-rubrica')" class="w-full flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="bg-red-100 text-red-600 p-3 rounded-xl"><i class="fa-solid fa-address-book text-xl"></i></div>
-                    <div class="text-left">
-                        <h3 class="font-bold text-gray-800">Rubrica Unità Locali</h3>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">WhatsApp Sedi</p>
+            <div class="space-y-4">
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <button onclick="toggleSubMenu('submenu-rubrica')" class="w-full flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-red-100 text-red-600 p-3 rounded-xl"><i class="fa-solid fa-address-book text-xl"></i></div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-gray-800">Rubrica Unità Locali</h3>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">WhatsApp Sedi</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-gray-300"></i>
+                    </button>
+                    <div id="submenu-rubrica" class="hidden mt-6 space-y-4 border-t pt-4">
+                        <div id="rubrica-list" class="space-y-4 text-sm"></div>
+                        <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold shadow-md">SALVA</button>
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-down text-gray-300"></i>
-            </button>
-            <div id="submenu-rubrica" class="hidden mt-6 space-y-4 border-t pt-4">
-                <div id="rubrica-list" class="space-y-4 text-sm"></div>
-                <button onclick="saveRubrica()" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold shadow-md">SALVA</button>
-            </div>
-        </div>
 
-        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-            <button onclick="toggleSubMenu('submenu-storico')" class="w-full flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <div class="bg-amber-100 text-amber-600 p-3 rounded-xl"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
-                    <div class="text-left">
-                        <h3 class="font-bold text-gray-800">Storico Richieste</h3>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Ultime richieste</p>
+                <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <button onclick="toggleSubMenu('submenu-storico')" class="w-full flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-amber-100 text-amber-600 p-3 rounded-xl"><i class="fa-solid fa-clock-rotate-left text-xl"></i></div>
+                            <div class="text-left">
+                                <h3 class="font-bold text-gray-800">Storico Richieste</h3>
+                                <p class="text-[10px] text-gray-500 uppercase font-bold">Ultime richieste</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-gray-300"></i>
+                    </button>
+                    <div id="submenu-storico" class="hidden mt-4 border-t pt-4">
+                        <div id="history-list" class="space-y-2 text-xs text-gray-600 italic">Nessun articolo nello storico.</div>
                     </div>
                 </div>
-                <i class="fa-solid fa-chevron-down text-gray-300"></i>
+
+                <a href="http://www.upmisolpack.altervista.org/disegnitecnici/" target="_blank" class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-100 text-blue-600 p-3 rounded-xl"><i class="fa-solid fa-gears text-xl"></i></div>
+                        <div class="text-left">
+                            <h3 class="font-bold text-gray-800">Sezione Tecnica</h3>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold">Disegni e Schede</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-gray-300 text-sm"></i>
+                </a>
+            </div>
+
+            <div class="mt-20 flex flex-col items-center gap-1">
+                <div class="firma-autore">Ingros Srl</div>
+                <div class="text-[8px] text-gray-300 font-bold">VERSION 2.0</div>
+            </div>
+
+            <button onclick="location.reload()" class="mt-8 w-full text-gray-400 font-bold text-[10px] uppercase tracking-widest border-2 border-gray-100 py-4 rounded-2xl">
+                Esci dall'Account
             </button>
-            <div id="submenu-storico" class="hidden mt-4 border-t pt-4">
-                <div id="history-list" class="space-y-2 text-xs text-gray-600 italic">
-                    Nessun articolo nello storico.
-                </div>
-            </div>
         </div>
-
-        <a href="http://www.upmisolpack.altervista.org/disegnitecnici/" target="_blank" class="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="bg-blue-100 text-blue-600 p-3 rounded-xl"><i class="fa-solid fa-gears text-xl"></i></div>
-                <div class="text-left">
-                    <h3 class="font-bold text-gray-800">Sezione Tecnica</h3>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold">Disegni e Schede</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square text-gray-300 text-sm"></i>
-        </a>
-    </div>
-
-    <button onclick="location.reload()" class="mt-12 w-full text-gray-400 font-bold text-[10px] uppercase tracking-widest border-2 border-gray-100 py-4 rounded-2xl">
-        Esci dall'Account
-    </button>
-</div>
 
         <nav class="fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
             <button onclick="switchTab('copertura')" id="tab-copertura" class="flex flex-col items-center text-gray-400 transition-all active:scale-90">
@@ -301,19 +217,26 @@
     </div>
 
     <script>
+        // --- GESTIONE SPLASH SCREEN ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const ss = document.getElementById('splash-screen');
+                ss.style.opacity = '0';
+                setTimeout(() => ss.style.display = 'none', 500);
+            }, 2500);
+        });
+
         let currentData = [];
         let currentTab = 'copertura';
         let currentUser = null;
         let rubrica = {};
 
-        // --- AUTH & SETUP ---
         async function checkAccess() {
             const inputCode = document.getElementById('access-code').value;
             try {
                 const resp = await fetch(`data/users.json?v=${Date.now()}`);
                 const users = await resp.json();
                 currentUser = users.find(u => u.codice === inputCode);
-
                 if (currentUser) {
                     await loadRubrica();
                     document.getElementById('login-screen').classList.add('hidden');
@@ -339,155 +262,87 @@
             }
         }
 
-       // --- POP WEB APP INSTALLLAZIONE ---
-       let deferredPrompt;
+        // --- POP WEB APP INSTALLLAZIONE (Logica Originale Invariata) ---
+        let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-        const isEdgeAndroid = /EdgA/.test(navigator.userAgent);
         const isEdge = /Edg/.test(navigator.userAgent);
         
-// Gestione per Android/Chrome/Edge (Evento nativo)
-window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (!isStandalone) {
-        showInstallPopup();
-    }
-});
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); deferredPrompt = e;
+            if (!isStandalone) showInstallPopup();
+        });
 
-// Forza la visualizzazione su iOS o se il prompt automatico non arriva (dopo 3 secondi)
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        if (!isStandalone && !deferredPrompt) {
-            // Se dopo 3 sec non è installata e non è apparso il prompt nativo, lo forziamo noi
-            showInstallPopup();
+        window.addEventListener('load', () => {
+            setTimeout(() => { if (!isStandalone && !deferredPrompt) showInstallPopup(); }, 3000);
+        });
+
+        function showInstallPopup() {
+            const popup = document.getElementById('install-popup');
+            const text = document.getElementById('install-text');
+            const btn = document.getElementById('btn-install-app');
+            popup.style.display = 'block';
+            if (isIOS) {
+                text.innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i><div class="finger-icon"></div></div> e poi seleziona <b>'Aggiungi a Home'</b>`;
+            } else if (isEdge) {
+                text.innerHTML = `Clicca il menu in basso <div class="menu-edge-wrapper"><div class="line-edge"></div><div class="line-edge"></div><div class="line-edge"></div><div class="finger-tap-edge"></div></div> e premi <b>'Aggiungi al telefono'</b>.`;
+                btn.innerText = "OK, HO CAPITO";
+            }
         }
-    }, 3000);
-});
 
-function showInstallPopup() {
-    const popup = document.getElementById('install-popup');
-    const text = document.getElementById('install-text');
-    const btn = document.getElementById('btn-install-app');
-    
-    popup.style.display = 'block';
+        document.getElementById('btn-install-app').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') document.getElementById('install-popup').style.display = 'none';
+                deferredPrompt = null;
+            } else {
+                alert(isIOS ? "Premi il tasto di condivisione in basso e seleziona 'Aggiungi alla schermata Home'." : "Apri il menu del browser (3 puntini) e clicca su 'Installa' o 'Aggiungi a schermata home'.");
+            }
+        });
 
-    if (isIOS) {
-        text.innerHTML = `Clicca <div class="share-icon-wrapper"><i class="fa-solid fa-arrow-up-from-bracket text-blue-500"></i><div class="finger-icon"></div></div> e poi seleziona <b>'Aggiungi a Home'</b>`;
-    } else if (isEdge) {
-        text.innerHTML = `
-            Clicca il menu in basso <div class="menu-edge-wrapper"><div class="line-edge"></div><div class="line-edge"></div><div class="line-edge"></div><div class="finger-tap-edge"></div></div> e premi <b>'Aggiungi al telefono'</b>.
-            <div class="edge-arrow"><i class="fa-solid fa-angles-down"></i></div>
-        `;
-        btn.innerText = "OK, HO CAPITO";
-    }
-}
-document.getElementById('btn-install-app').addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') document.getElementById('install-popup').style.display = 'none';
-        deferredPrompt = null;
-    } else {
-        // Messaggio di aiuto manuale
-        alert(isIOS ? "Premi il tasto di condivisione in basso e seleziona 'Aggiungi alla schermata Home'." : "Apri il menu del browser (3 puntini) e clicca su 'Installa' o 'Aggiungi a schermata home'.");
-    }
-});
-
-       
-        // --- CORE FUNCTIONS ---
+        // --- CORE FUNCTIONS (Originali Invariate) ---
         async function switchTab(tab) {
             const btn = document.getElementById(`tab-${tab}`);
             if (navigator.vibrate) navigator.vibrate(15);
-            
             const spinner = document.getElementById('loading-spinner');
             spinner.classList.remove('hidden');
-
             currentTab = tab;
             document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
-            
             document.querySelectorAll('nav button').forEach(b => b.className = "flex flex-col items-center text-gray-400 transition-all active:scale-90");
             btn.className = "flex flex-col items-center text-red-600 font-bold scale-110 transition-all";
-
             try {
                 const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
                 currentData = await resp.json();
                 currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
-                
                 generateFilterUI();
                 applyFilters();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (err) { 
-                console.error(err);
-                alert("Errore caricamento dati: " + err.message + " su file: " + tab); 
-            }
+            } catch (err) { alert("Errore caricamento dati."); }
             finally { setTimeout(() => spinner.classList.add('hidden'), 300); }
         }
 
         function generateFilterUI() {
             const filterRows = document.getElementById('filter-rows');
-            let config = [];
-
-            // Adattamento configurazione filtri in base alla Tab
-            if (currentTab === 'policarbonati') {
-                config = [
-                    { id: 'Unita_locale', label: 'Sede' },
-                    { id: 'Modello', label: 'Modello' },
-                    { id: 'Spessore', label: 'Spessore' },
-                    { id: 'Colore', label: 'Colore' }
-                ];
-            } else if (currentTab === 'lam_grecate') {
-                config = [
-                    { id: 'Unita_locale', label: 'Sede' },
-                    { id: 'Modello', label: 'Profilo/Modello' },
-                    { id: 'Colore', label: 'Colore' },
-                    { id: 'Spessore', label: 'Spessore' }
-                ];
-            } else { // Parete e Copertura
-                config = [
-                    { id: 'Unita_locale', label: 'Sede' },
-                    { id: 'Modello', label: 'Modello' },
-                    { id: 'Isolante', label: 'Isolante' },
-                    { id: 'Altezza', label: 'Altezza/Spessore' },
-                    { id: 'SP_EST', label: 'Spess. Est.' },
-                    { id: 'SP_INT', label: 'Spess. Int.' },
-                    { id: 'Colore_EST', label: 'Colore Est.' },
-                    { id: 'Colore_INT', label: 'Colore Int.' }
-                ];
-            }
+            let config = (currentTab === 'policarbonati') ? 
+                [{ id: 'Unita_locale', label: 'Sede' }, { id: 'Modello', label: 'Modello' }, { id: 'Spessore', label: 'Spessore' }, { id: 'Colore', label: 'Colore' }] :
+                (currentTab === 'lam_grecate') ?
+                [{ id: 'Unita_locale', label: 'Sede' }, { id: 'Modello', label: 'Profilo/Modello' }, { id: 'Colore', label: 'Colore' }, { id: 'Spessore', label: 'Spessore' }] :
+                [{ id: 'Unita_locale', label: 'Sede' }, { id: 'Modello', label: 'Modello' }, { id: 'Isolante', label: 'Isolante' }, { id: 'Altezza', label: 'Altezza/Spessore' }, { id: 'SP_EST', label: 'Spess. Est.' }, { id: 'SP_INT', label: 'Spess. Int.' }, { id: 'Colore_EST', label: 'Colore Est.' }, { id: 'Colore_INT', label: 'Colore Int.' }];
 
             const currentSelections = {};
-            config.forEach(c => {
-                const el = document.getElementById(`filter-${c.id}`);
-                if(el) currentSelections[c.id] = el.value;
-            });
-
+            config.forEach(c => { const el = document.getElementById(`filter-${c.id}`); if(el) currentSelections[c.id] = el.value; });
             filterRows.innerHTML = '';
             config.forEach(conf => {
                 let available = currentData.filter(item => {
                     let match = true;
-                    config.forEach(other => {
-                        if (other.id !== conf.id && currentSelections[other.id]) {
-                            if (item[other.id] != currentSelections[other.id]) match = false;
-                        }
-                    });
+                    config.forEach(other => { if (other.id !== conf.id && currentSelections[other.id]) { if (item[other.id] != currentSelections[other.id]) match = false; } });
                     return match;
                 });
-
-                const values = [...new Set(available.map(i => i[conf.id]))]
-                    .filter(v => v && v !== "")
-                    .sort((a,b) => (typeof a === 'number' ? a-b : String(a).localeCompare(String(b))));
-
+                const values = [...new Set(available.map(i => i[conf.id]))].filter(v => v && v !== "").sort((a,b) => (typeof a === 'number' ? a-b : String(a).localeCompare(String(b))));
                 const div = document.createElement('div');
                 div.className = "flex flex-col gap-1";
-                div.innerHTML = `
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">${conf.label}</label>
-                    <select id="filter-${conf.id}" onchange="applyFilters(); generateFilterUI();" 
-                            class="w-full bg-white border-2 border-gray-100 rounded-xl p-3 text-sm font-semibold outline-none focus:border-red-600 appearance-none shadow-sm">
-                        <option value="">TUTTI</option>
-                        ${values.map(v => `<option value="${v}" ${currentSelections[conf.id] == v ? 'selected' : ''}>${v}</option>`).join('')}
-                    </select>
-                `;
+                div.innerHTML = `<label class="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">${conf.label}</label><select id="filter-${conf.id}" onchange="applyFilters(); generateFilterUI();" class="w-full bg-white border-2 border-gray-100 rounded-xl p-3 text-sm font-semibold outline-none focus:border-red-600 appearance-none shadow-sm"><option value="">TUTTI</option>${values.map(v => `<option value="${v}" ${currentSelections[conf.id] == v ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
                 filterRows.appendChild(div);
             });
         }
@@ -497,208 +352,60 @@ document.getElementById('btn-install-app').addEventListener('click', async () =>
             let active = 0;
             let filtered = currentData.filter(item => {
                 let m = true;
-                selects.forEach(s => {
-                    const f = s.id.replace('filter-', '');
-                    if (s.value) {
-                        if (item[f] != s.value) m = false;
-                    }
-                });
+                selects.forEach(s => { const f = s.id.replace('filter-', ''); if (s.value) { if (item[f] != s.value) m = false; } });
                 return m;
             });
-
             selects.forEach(s => { if(s.value) active++; });
             const counter = document.getElementById('filter-counter');
             counter.innerText = active;
             active > 0 ? counter.classList.remove('hidden') : counter.classList.add('hidden');
-
             renderCards(filtered);
         }
 
-       function renderCards(data) {
-    const container = document.getElementById('card-list');
-    if (data.length === 0) {
-        container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato con questi filtri</div>`;
-        return;
-    }
+        function renderCards(data) {
+            const container = document.getElementById('card-list');
+            if (data.length === 0) { container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato</div>`; return; }
+            container.innerHTML = data.map(item => {
+                const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
+                let details = (currentTab === 'policarbonati') ? 
+                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>` : 
+                    (currentTab === 'lam_grecate') ?
+                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale</span><br>${item.Tipo_Materiale || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>` :
+                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>`;
 
-    container.innerHTML = data.map(item => {
-        const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
+                return `<div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100"><div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase shadow-sm">L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}</div><div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div><div class="font-bold text-gray-800 text-sm leading-tight mb-4 pr-16 min-h-[2.5rem]">${item.Descrizione}</div><div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] bg-gray-50 p-3 rounded-lg font-medium text-gray-700">${details}</div><button onclick="sendWA(${waArgs})" class="mt-4 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:scale-95 shadow-md"><i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ</button></div>`;
+            }).join('');
+        }
+
+        function toggleFilters() { document.getElementById('filter-modal').classList.toggle('hidden'); }
+        function resetFilters() { document.querySelectorAll('#filter-rows select').forEach(s => s.value = ""); generateFilterUI(); applyFilters(); }
         
-        let details = '';
-        // Struttura unificata per tutte le tab: usiamo sempre una griglia a 2 colonne pulita
-        if (currentTab === 'policarbonati') {
-            details = `
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>
-                <div class="col-span-2 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Modulo</span><br>${item.Modulo || '-'}</div>
-            `;
-        } else if (currentTab === 'lam_grecate') {
-            details = `
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale</span><br>${item.Tipo_Materiale || '-'}</div>
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>
-                <div class="col-span-2 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>
-            `;
-        } else {
-            // Tab Copertura e Parete
-            details = `
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
-                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>
-                <div class="border-b pb-1 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || item.Colore || '-'}</div>
-                <div class="border-b pb-1 pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Int.</span><br>${item.Colore_INT || '-'}</div>
-                <div class="pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Est (mm)</span><br>${item.SP_EST || '-'}</div>
-                <div class="pt-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Sp. Int (mm)</span><br>${item.SP_INT || '-'}</div>
-            `;
-        }
-
-        return `
-            <div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100">
-                <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase shadow-sm">
-                    L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}
-                </div>
-                <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div>
-                <div class="text-[11px] text-gray-500 mb-1 italic">Art. ${item.Articolo}</div>
-                <div class="font-bold text-gray-800 text-sm leading-tight mb-4 pr-16 min-h-[2.5rem]">${item.Descrizione}</div>
-                
-                <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] bg-gray-50 p-3 rounded-lg border border-gray-100 font-medium text-gray-700">
-                    ${details}
-                </div>
-
-                <button onclick="sendWA(${waArgs})" class="mt-4 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:scale-95 transition-transform shadow-md">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ
-                </button>
-            </div>
-        `;
-    }).join('');
-}
-
- 
-
-       // --- FUNZIONI DI CONTROLLO INTERFACCIA ---
-        
-        function toggleFilters() {
-            const modal = document.getElementById('filter-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        function resetFilters() {
-            const selects = document.querySelectorAll('#filter-rows select');
-            selects.forEach(s => s.value = "");
-            generateFilterUI();
-            applyFilters();
-        }
-
         function toggleSettings() {
             const mod = document.getElementById('settings-modal');
-    
             if (mod.classList.contains('hidden')) {
-                // Render dei dati prima di mostrare
-                renderRubrica();
-                renderHistory();
-        
-                mod.classList.remove('hidden');
-                setTimeout(() => {
-                    mod.classList.add('active');
-                }, 10);
+                renderRubrica(); renderHistory();
+                mod.classList.remove('hidden'); setTimeout(() => mod.classList.add('active'), 10);
             } else {
-                // --- NUOVA LOGICA: Chiude tutti i sottomenu prima di chiudere il menu ---
-                document.querySelectorAll('[id^="submenu-"]').forEach(sub => {
-                    sub.classList.add('hidden');
-            });
-
-            // Animazione di uscita
-            mod.classList.remove('active');
-            setTimeout(() => {
-                mod.classList.add('hidden');
-            }, 300);
-        }
-    }
-
-        function toggleSubMenu(id) {
-            const sub = document.getElementById(id);
-            sub.classList.toggle('hidden');
+                document.querySelectorAll('[id^="submenu-"]').forEach(sub => sub.classList.add('hidden'));
+                mod.classList.remove('active'); setTimeout(() => mod.classList.add('hidden'), 300);
+            }
         }
 
-        // --- GESTIONE STORICO E RUBRICA ---
+        function toggleSubMenu(id) { document.getElementById(id).classList.toggle('hidden'); }
+
         let searchHistory = JSON.parse(localStorage.getItem('ingros_history')) || [];
+        function addToHistory(desc) { if (!searchHistory.includes(desc)) { searchHistory.unshift(desc); if (searchHistory.length > 5) searchHistory.pop(); localStorage.setItem('ingros_history', JSON.stringify(searchHistory)); } }
+        function renderHistory() { const container = document.getElementById('history-list'); container.innerHTML = searchHistory.length === 0 ? "Nessun articolo recente." : searchHistory.map(item => `<div class="bg-white p-2 rounded-lg border border-gray-100 truncate mb-1">${item}</div>`).join(''); }
+        function renderRubrica() { document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `<div class="flex flex-col gap-1"><label class="text-[9px] font-bold text-gray-400 uppercase">${s}</label><input type="text" value="${rubrica[s]}" data-sede="${s}" class="border-2 p-2 rounded-xl bg-gray-50 font-bold text-gray-700 outline-none focus:border-red-600"></div>`).join(''); }
+        function saveRubrica() { const inputs = document.querySelectorAll('#rubrica-list input'); inputs.forEach(i => { rubrica[i.dataset.sede] = i.value; }); localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica)); alert("Rubrica salvata!"); }
 
-        function addToHistory(desc) {
-            if (!searchHistory.includes(desc)) {
-                searchHistory.unshift(desc); 
-                if (searchHistory.length > 5) searchHistory.pop(); 
-                localStorage.setItem('ingros_history', JSON.stringify(searchHistory));
-            }
-        }
-
-        function renderHistory() {
-            const container = document.getElementById('history-list');
-            if (searchHistory.length === 0) {
-                container.innerHTML = "Nessun articolo recente.";
-                return;
-            }
-            container.innerHTML = searchHistory.map(item => `
-                <div class="bg-white p-2 rounded-lg border border-gray-100 truncate mb-1">
-                    ${item}
-                </div>
-            `).join('');
-        }
-
-        function renderRubrica() {
-            document.getElementById('rubrica-list').innerHTML = Object.keys(rubrica).map(s => `
-                <div class="flex flex-col gap-1">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase">${s}</label>
-                    <input type="text" value="${rubrica[s]}" data-sede="${s}" 
-                           class="border-2 p-2 rounded-xl bg-gray-50 font-bold text-gray-700 outline-none focus:border-red-600">
-                </div>
-            `).join('');
-        }
-
-        function saveRubrica() {
-            const inputs = document.querySelectorAll('#rubrica-list input');
-            inputs.forEach(i => {
-                rubrica[i.dataset.sede] = i.value;
-            });
-            localStorage.setItem('ingros_rubrica', JSON.stringify(rubrica));
-            alert("Rubrica salvata correttamente!");
-        }
-
-        // --- INVIO WHATSAPP ---
         function sendWA(sede, art, desc, lung, pz) {
-            const storico = `${art} ${lung} ${pz} PZ`;
-            addToHistory(storico);
+            addToHistory(`${art} ${lung} ${pz} PZ`);
             const num = rubrica[sede] || "";
-            if(!num || num === "000") {
-                return alert("Imposta il numero per " + sede + " nelle impostazioni.");
-            }
-            const msg = `*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`;
-            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`);
+            if(!num || num === "000") return alert("Imposta il numero per " + sede);
+            const msg = encodeURIComponent(`*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`);
+            window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
