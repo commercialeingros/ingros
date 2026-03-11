@@ -345,7 +345,7 @@
                 alert(isIOS ? "Premi il tasto di condivisione in basso e seleziona 'Aggiungi alla schermata Home'." : "Apri il menu del browser (3 puntini) e clicca su 'Installa' o 'Aggiungi a schermata home'.");
             }
         });
-
+        /*
         async function switchTab(tab) {
             const btn = document.getElementById(`tab-${tab}`);
             if (navigator.vibrate) navigator.vibrate(15);
@@ -365,7 +365,47 @@
             } catch (err) { alert("Errore caricamento dati."); }
             finally { setTimeout(() => spinner.classList.add('hidden'), 300); }
         }
+        */
 
+        async function switchTab(tab) {
+    const btn = document.getElementById(`tab-${tab}`);
+    if (navigator.vibrate) navigator.vibrate(15);
+    const spinner = document.getElementById('loading-spinner');
+    spinner.classList.remove('hidden');
+    
+    currentTab = tab;
+    document.getElementById('current-category-title').innerText = tab.replace('_', ' ').toUpperCase();
+    
+    // Reset classi tasti navigazione
+    document.querySelectorAll('nav button').forEach(b => b.className = "flex flex-col items-center text-gray-400 transition-all active:scale-90");
+    btn.className = "flex flex-col items-center text-red-600 font-bold scale-110 transition-all";
+
+    try {
+        const resp = await fetch(`data/${tab}.json?v=${Date.now()}`);
+        let dataRaw = await resp.json();
+
+        // --- FILTRO QUANTITÀ: Esclude tutto ciò che è < 1 ---
+        currentData = dataRaw.filter(item => {
+            const qta = parseFloat(item.Quantita_1) || 0;
+            return qta >= 1; 
+        });
+
+        // Ordinamento per lunghezza (dal più lungo al più corto)
+        currentData.sort((a, b) => (parseFloat(b.Lunghezza) || 0) - (parseFloat(a.Lunghezza) || 0));
+
+        generateFilterUI();
+        applyFilters();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) { 
+        console.error(err);
+        alert("Errore caricamento dati."); 
+    } finally { 
+        setTimeout(() => spinner.classList.add('hidden'), 300); 
+    }
+}
+
+        
         function generateFilterUI() {
             const filterRows = document.getElementById('filter-rows');
             let config = (currentTab === 'policarbonati') ? 
@@ -476,6 +516,7 @@
     </script>
 </body>
 </html>
+
 
 
 
