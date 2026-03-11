@@ -234,7 +234,7 @@
             </div>
 
             <div class="mt-20 flex flex-col items-center gap-1">
-                <div class="firma-autore">Ingros Srl</div>
+                <div class="firma-autore">MARCO ZAINA</div>
                 <div class="text-[8px] text-gray-300 font-bold">VERSION 2.0</div>
             </div>
 
@@ -257,7 +257,7 @@
                 <span class="text-[9px] mt-1 font-extrabold tracking-tighter">POLICARB.</span>
             </button>
             <button onclick="switchTab('lam_grecate')" id="tab-lam_grecate" class="flex flex-col items-center text-gray-400 transition-all duration-300">
-                <i class="fa-solid fa-sheet-plastic text-xl"></i>
+                <i class="fa-solid fa-barcode text-xl"></i>
                 <span class="text-[9px] mt-1 font-extrabold tracking-tighter">GRECATE</span>
             </button>
         </nav>
@@ -421,6 +421,7 @@
                                <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>`;
                 } else {
                     // CATEGORIE COPERTURA E PARETE: AGGIUNTI I CAMPI RICHIESTI
+                    /*
                     details = `
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || '-'}</div>
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
@@ -428,6 +429,34 @@
 
                         <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessori (E/I)</span><br>${item.SP_EST || '0'} / ${item.SP_INT || '0'}</div>
                     `;
+                    */
+                    // Esempio per Copertura/Parete
+details = `
+    <div class="border-b pb-1">
+        <span class="text-gray-400 font-bold uppercase text-[9px] flex items-center gap-1">
+            <i class="fa-solid fa-arrows-up-down text-[8px]"></i> Altezza
+        </span>
+        <br>${item.Altezza || '-'}
+    </div>
+    <div class="border-b pb-1">
+        <span class="text-gray-400 font-bold uppercase text-[9px] flex items-center gap-1">
+            <i class="fa-solid fa-fill-drip text-[8px]"></i> Colore Est.
+        </span>
+        <br>${item.Colore_EST || '-'}
+    </div>
+    <div class="border-b pb-1">
+        <span class="text-gray-400 font-bold uppercase text-[9px] flex items-center gap-1">
+            <i class="fa-solid fa-shield-halved text-[8px]"></i> Isolante
+        </span>
+        <br>${item.Isolante || item.Spessore || '-'}
+    </div>
+    <div class="border-b pb-1">
+        <span class="text-gray-400 font-bold uppercase text-[9px] flex items-center gap-1">
+            <i class="fa-solid fa-ruler-combined text-[8px]"></i> Spessori (E/I)
+        </span>
+        <br>${item.SP_EST || '0'} / ${item.SP_INT || '0'}
+    </div>
+`;
                 }
 
                 return `<div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100">
@@ -474,6 +503,7 @@
     </script>
 </body>
 </html>
+
 
 
 
