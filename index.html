@@ -21,7 +21,6 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .animate-spin { animation: spin 1s linear infinite; }
 
-        /* --- NUOVO: SPLASH SCREEN STYLE --- */
         #splash-screen {
             position: fixed;
             inset: 0;
@@ -39,7 +38,6 @@
             50% { transform: scale(0.95); opacity: 0.8; } 
         }
 
-        /* Stile del Popup di Installazione iOS/Android */
         #install-popup {
             display: none;
             position: fixed;
@@ -54,7 +52,6 @@
             border: 2px solid #dc2626;
         }
 
-        /* Animazioni Edge/iOS/Android originali mantenute... */
         .menu-edge-wrapper { position: relative; display: inline-flex; flex-direction: column; gap: 3px; align-items: center; justify-content: center; width: 24px; padding: 4px; background: #f3f4f6; border-radius: 4px; }
         .line-edge { width: 16px; height: 2px; background-color: #333; }
         .finger-tap-edge { position: absolute; width: 18px; height: 18px; background-color: rgba(220, 38, 38, 0.4); border-radius: 50%; animation: pulse-edge 1.5s infinite; }
@@ -66,7 +63,6 @@
         #settings-modal { transition: all 0.3s ease-in-out; transform: translateY(100%); }
         #settings-modal.active { transform: translateY(0); display: block !important; }
 
-        /* --- NUOVO: FIRMA AUTORE --- */
         .firma-autore { font-size: 9px; font-weight: 800; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
@@ -217,7 +213,6 @@
     </div>
 
     <script>
-        // --- GESTIONE SPLASH SCREEN ---
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const ss = document.getElementById('splash-screen');
@@ -262,7 +257,6 @@
             }
         }
 
-        // --- POP WEB APP INSTALLLAZIONE (Logica Originale Invariata) ---
         let deferredPrompt;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
@@ -301,7 +295,6 @@
             }
         });
 
-        // --- CORE FUNCTIONS (Originali Invariate) ---
         async function switchTab(tab) {
             const btn = document.getElementById(`tab-${tab}`);
             if (navigator.vibrate) navigator.vibrate(15);
@@ -367,13 +360,34 @@
             if (data.length === 0) { container.innerHTML = `<div class="p-10 text-center text-gray-400 font-bold italic">Nessun articolo trovato</div>`; return; }
             container.innerHTML = data.map(item => {
                 const waArgs = `'${item.Unita_locale}', '${item.Articolo}', '${(item.Descrizione||'').replace(/'/g,"")}', '${item.Lunghezza||0}', '${item.Quantita_1||0}'`;
-                let details = (currentTab === 'policarbonati') ? 
-                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>` : 
-                    (currentTab === 'lam_grecate') ?
-                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale</span><br>${item.Tipo_Materiale || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>` :
-                    `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div><div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>`;
+                
+                let details = "";
+                if (currentTab === 'policarbonati') {
+                    details = `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>
+                               <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore</span><br>${item.Colore || '-'}</div>`;
+                } else if (currentTab === 'lam_grecate') {
+                    details = `<div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Materiale</span><br>${item.Tipo_Materiale || '-'}</div>
+                               <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spessore</span><br>${item.Spessore || '-'}</div>`;
+                } else {
+                    // CATEGORIE COPERTURA E PARETE: AGGIUNTI I CAMPI RICHIESTI
+                    details = `
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Altezza</span><br>${item.Altezza || '-'}</div>
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Isolante</span><br>${item.Isolante || item.Spessore || '-'}</div>
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Colore Est.</span><br>${item.Colore_EST || '-'}</div>
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Est.</span><br>${item.SP_EST || '-'}</div>
+                        <div class="border-b pb-1"><span class="text-gray-400 font-bold uppercase text-[9px]">Spess. Int.</span><br>${item.SP_INT || '-'}</div>
+                    `;
+                }
 
-                return `<div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100"><div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase shadow-sm">L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}</div><div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div><div class="font-bold text-gray-800 text-sm leading-tight mb-4 pr-16 min-h-[2.5rem]">${item.Descrizione}</div><div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] bg-gray-50 p-3 rounded-lg font-medium text-gray-700">${details}</div><button onclick="sendWA(${waArgs})" class="mt-4 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:scale-95 shadow-md"><i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ</button></div>`;
+                return `<div class="bg-white p-4 rounded-xl shadow-sm card-giacenza relative border border-gray-100">
+                    <div class="absolute top-0 right-0 bg-red-600 text-white px-3 py-1 font-black rounded-bl-xl text-xs uppercase shadow-sm">L. ${item.Lunghezza} - ${item.Quantita_1} ${item.UM_1}</div>
+                    <div class="text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-tighter">${item.Unita_locale}</div>
+                    <div class="font-bold text-gray-800 text-sm leading-tight mb-4 pr-16 min-h-[2.5rem]">${item.Descrizione}</div>
+                    <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[11px] bg-gray-50 p-3 rounded-lg font-medium text-gray-700">${details}</div>
+                    <button onclick="sendWA(${waArgs})" class="mt-4 w-full bg-green-500 text-white py-4 rounded-xl flex items-center justify-center gap-2 font-black text-xs active:scale-95 shadow-md">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> RICHIEDI DISPONIBILITÀ
+                    </button>
+                </div>`;
             }).join('');
         }
 
