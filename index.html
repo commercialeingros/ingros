@@ -157,7 +157,10 @@
                 <div>
                     <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
                     <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
-                    <p id="testo-data" class="text-[9px] text-red-600 font-bold mt-1 uppercase">Sincronizzazione...</p>
+                    <div class="flex items-center gap-2 mt-1" onclick="manualRefresh()">
+                        <i id="icona-fresca" class="fa-solid fa-clock-rotate-left text-red-600 text-[10px]"></i>
+                        <p id="testo-data" class="text-[9px] text-red-600 font-bold uppercase cursor-pointer">Sincronizzazione...</p>
+                    </div>
                 </div>
                 <div class="flex gap-4 items-center">
                     <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-bars text-2xl"></i></button>
@@ -292,6 +295,21 @@
                 document.getElementById('testo-data').innerText = "Update: Non disponibile";
             }
         } //caricaInfoAggiornamento
+
+        //Refresh manuale dati
+        function manualRefresh() {
+            const icon = document.getElementById('icona-fresca');
+            // Fa ruotare l'icona per dare un feedback visivo
+            icon.classList.add('fa-spin');
+    
+            // Suono o vibrazione se supportata
+            if (navigator.vibrate) navigator.vibrate(20);
+    
+            // Ricarica la pagina forzando lo scaricamento dei nuovi dati
+            setTimeout(() => {
+                location.reload(true);
+            }, 500);
+        } //manualRefresh
         
         async function checkAccess() {
             const inputCode = document.getElementById('access-code').value;
@@ -302,7 +320,7 @@
                 if (currentUser) {
                     await loadRubrica();
                     caricaInfoAggiornamento();
-                    
+                    switchTab('copertura');
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app-content').classList.remove('hidden');
                     document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
@@ -534,6 +552,7 @@
     </script>
 </body>
 </html>
+
 
 
 
