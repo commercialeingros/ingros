@@ -157,9 +157,11 @@
                 <div>
                     <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
                     <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
-                    <div class="flex items-center gap-2 mt-1" onclick="manualRefresh()">
-                        <i id="icona-fresca" class="fa-solid fa-clock-rotate-left text-red-600 text-[10px]"></i>
-                        <p id="testo-data" class="text-[9px] text-red-600 font-bold uppercase cursor-pointer">Sincronizzazione...</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <button id="btn-refresh-data" onclick="manualRefresh()" class="text-red-600 active:scale-90 transition-transform">
+                            <i class="fa-solid fa-clock-rotate-left text-[10px]"></i>
+                        </button>
+                        <p id="testo-data" class="text-[9px] text-red-600 font-bold uppercase">Sincronizzazione...</p>
                     </div>
                 </div>
                 <div class="flex gap-4 items-center">
@@ -297,18 +299,31 @@
         } //caricaInfoAggiornamento
 
         //Refresh manuale dati
-        function manualRefresh() {
-            const icon = document.getElementById('icona-fresca');
-            // Fa ruotare l'icona per dare un feedback visivo
+        async function manualRefresh() {
+            const btn = document.getElementById('btn-refresh-data');
+            const icon = btn.querySelector('i');
+    
+            // Feedback visivo: l'icona ruota
             icon.classList.add('fa-spin');
-    
-            // Suono o vibrazione se supportata
             if (navigator.vibrate) navigator.vibrate(20);
-    
-            // Ricarica la pagina forzando lo scaricamento dei nuovi dati
-            setTimeout(() => {
-                location.reload(true);
-            }, 500);
+
+            try {
+                // 1. Aggiorna la scritta della data
+                await caricaInfoAggiornamento();
+        
+                // 2. Ricarica i dati della tab attuale (senza fare logout)
+                // currentTab contiene già il nome della categoria aperta (es. 'copertura')
+                await switchTab(currentTab);
+        
+                console.log("Dati aggiornati con successo!");
+            } catch (err) {
+                console.error("Errore durante l'aggiornamento:", err);
+            } finally {
+                // Ferma la rotazione dopo un secondo
+                setTimeout(() => {
+                    icon.classList.remove('fa-spin');
+                }, 1000);
+            }
         } //manualRefresh
         
         async function checkAccess() {
@@ -552,6 +567,7 @@
     </script>
 </body>
 </html>
+
 
 
 
