@@ -157,6 +157,7 @@
                 <div>
                     <h1 id="current-category-title" class="text-2xl font-black text-gray-800 uppercase tracking-tight">Copertura</h1>
                     <p id="user-welcome" class="text-xs text-gray-500 font-bold uppercase"></p>
+                    <p id="testo-data" class="text-[9px] text-red-600 font-bold mt-1 uppercase">Sincronizzazione...</p>
                 </div>
                 <div class="flex gap-4 items-center">
                     <button onclick="toggleSettings()" class="text-gray-400 hover:text-red-600"><i class="fa-solid fa-bars text-2xl"></i></button>
@@ -277,6 +278,21 @@
         let currentUser = null;
         let rubrica = {};
 
+        // Carica data/ora aggiornamento
+        async function caricaInfoAggiornamento() {
+            try {
+                const r = await fetch(`data/update.json?v=${Date.now()}`);
+                if (r.ok) {
+                    const d = await r.json();
+                    if(d.last_update) {
+                        document.getElementById('testo-data').innerText = `Aggiornamento: ${d.last_update}`;
+                    }
+                }
+            } catch(e) {
+                document.getElementById('testo-data').innerText = "Update: Non disponibile";
+            }
+        } //caricaInfoAggiornamento
+        
         async function checkAccess() {
             const inputCode = document.getElementById('access-code').value;
             try {
@@ -285,6 +301,8 @@
                 currentUser = users.find(u => u.codice === inputCode);
                 if (currentUser) {
                     await loadRubrica();
+                    caricaInfoAggiornamento();
+                    
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app-content').classList.remove('hidden');
                     document.getElementById('user-welcome').innerText = `${currentUser.nome} ${currentUser.cognome}`;
@@ -516,6 +534,7 @@
     </script>
 </body>
 </html>
+
 
 
 
