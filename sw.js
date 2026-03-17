@@ -1,5 +1,5 @@
 // sw.js - Gestione Cache e Aggiornamento Forzato
-const CACHE_NAME = 'ingros-v2.1'; // <--- CAMBIA QUESTO NUMERO OGNI VOLTA CHE FAI UNA MODIFICA
+const CACHE_NAME = 'ingros-v2.0'; // <--- CAMBIA QUESTO NUMERO OGNI VOLTA CHE FAI UNA MODIFICA
 
 // File da salvare in cache per il funzionamento offline
 const urlsToCache = [
