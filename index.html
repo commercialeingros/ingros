@@ -178,13 +178,19 @@
 
         <div id="filter-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-end">
             <div class="bg-white w-full p-6 rounded-t-3xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+        
                 <div class="flex justify-between items-center border-b pb-3">
-                    <h3 class="font-bold text-lg">FILTRI AVANZATI</h3>
-                    <button onclick="resetFilters()" class="text-red-600 text-sm font-bold">RESETTA TUTTO</button>
+                    <button onclick="toggleFilters()" class="bg-red-600 text-white px-6 py-2 rounded-xl font-bold shadow-md active:scale-95 transition-transform uppercase text-sm">
+                        APPLICA FILTRO
+                    </button>
+                    <button onclick="resetFilters()" class="text-gray-400 text-sm font-bold hover:text-red-600">
+                        RESETTA TUTTO
+                    </button>
                 </div>
+
                 <div id="filter-rows" class="space-y-4 pt-2"></div>
-                <button onclick="toggleFilters()" class="w-full bg-black text-white py-4 rounded-xl font-bold mt-4 shadow-lg">MOSTRA RISULTATI</button>
-            </div>
+        
+                </div>
         </div>
 
         <div id="settings-modal" class="fixed inset-0 bg-white z-[70] hidden p-6 overflow-y-auto">
