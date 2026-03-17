@@ -276,6 +276,34 @@
     </div>
 
     <script>
+        // Cambia questo numero ogni volta che carichi una nuova versione sul server
+        const APP_VERSION = "2.1";
+        function checkAppUpdate() {
+            const lastVersion = localStorage.getItem('ingros_app_version');
+
+            if (lastVersion && lastVersion !== APP_VERSION) {
+                // Rilevata nuova versione: Mostra avviso o forza ricaricamento
+                alert("Nuova versione disponibile (" + APP_VERSION + "). L'app verrà aggiornata.");
+        
+                localStorage.setItem('ingros_app_version', APP_VERSION);
+        
+                // Svuota la cache e ricarica forzatamente
+                if ('serviceWorker' in navigator) {
+                    caches.keys().then(names => {
+                        for (let name of names) caches.delete(name);
+                    });
+                }
+        
+                // Aggiungiamo un parametro dummy per saltare la cache del server/browser
+                window.location.href = window.location.pathname + '?v=' + Date.now();
+            } else {
+                localStorage.setItem('ingros_app_version', APP_VERSION);
+            }
+        }
+
+        // Eseguita subito all'avvio
+        checkAppUpdate();
+        
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const ss = document.getElementById('splash-screen');
