@@ -13,6 +13,9 @@
     <link rel="apple-touch-icon" href="data/IngrosCoperture.jpg">
     <link rel="icon" type="image/png" href="data/IngrosCoperture.jpg">
     <meta name="theme-color" content="#0f172a">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
     <style>
         body { -webkit-tap-highlight-color: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -247,7 +250,7 @@
 
             <div class="mt-20 flex flex-col items-center gap-1">
                 <div class="firma-autore">MARCO ZAINA</div>
-                <div class="text-[8px] text-gray-300 font-bold">VERSIONE 2.0</div>
+                <div class="text-[8px] text-gray-300 font-bold">VERSIONE <span id="app-version-display">2.0</span></div>
             </div>
 
             <button onclick="location.reload()" class="mt-8 w-full text-gray-400 font-bold text-[10px] uppercase tracking-widest border-2 border-gray-100 py-4 rounded-2xl">
@@ -276,33 +279,41 @@
     </div>
 
     <script>
-        // Cambia questo numero ogni volta che carichi una nuova versione sul server
-        const APP_VERSION = "2.1";
-        function checkAppUpdate() {
-            const lastVersion = localStorage.getItem('ingros_app_version');
+        // --- CONFIGURAZIONE VERSIONE ---
+        const CURRENT_VERSION = "2.2"; // INCREMENTA SEMPRE QUESTO NUMERO AD OGNI UPDATE
 
-            if (lastVersion && lastVersion !== APP_VERSION) {
-                // Rilevata nuova versione: Mostra avviso o forza ricaricamento
-                alert("Nuova versione disponibile (" + APP_VERSION + "). L'app verrà aggiornata.");
+        (function() {
+            // 1. Mostra subito la versione corretta nella UI
+            document.addEventListener('DOMContentLoaded', () => {
+                const display = document.getElementById('app-version-display');
+                if (display) display.innerText = CURRENT_VERSION;
+            });
+
+            // 2. Logica di controllo per iOS e Browser
+            const savedVersion = localStorage.getItem('ingros_version_control');
+
+            if (savedVersion && savedVersion !== CURRENT_VERSION) {
+                console.log("Nuova versione rilevata, forzo il refresh...");
         
-                localStorage.setItem('ingros_app_version', APP_VERSION);
-        
-                // Svuota la cache e ricarica forzatamente
+                // Pulizia cache (per sicurezza)
                 if ('serviceWorker' in navigator) {
                     caches.keys().then(names => {
                         for (let name of names) caches.delete(name);
                     });
                 }
-        
-                // Aggiungiamo un parametro dummy per saltare la cache del server/browser
-                window.location.href = window.location.pathname + '?v=' + Date.now();
-            } else {
-                localStorage.setItem('ingros_app_version', APP_VERSION);
-            }
-        }
 
-        // Eseguita subito all'avvio
-        checkAppUpdate();
+                // Salviamo la nuova versione
+                localStorage.setItem('ingros_version_control', CURRENT_VERSION);
+
+                // Il trucco per iPhone: ricarica la pagina aggiungendo un parametro unico
+                // Questo rompe la cache di sistema di iOS
+                const sep = window.location.search ? '&' : '?';
+                window.location.replace(window.location.href + sep + 'update=' + Date.now());
+            } else {
+                localStorage.setItem('ingros_version_control', CURRENT_VERSION);
+            }
+        })();
+
         
         window.addEventListener('load', () => {
             setTimeout(() => {
