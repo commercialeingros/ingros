@@ -16,7 +16,7 @@
       "purpose": "any"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "./index.html?v=2.0",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen"],
   "orientation": "portrait",
