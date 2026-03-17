@@ -571,6 +571,31 @@
             const msg = encodeURIComponent(`*RICHIESTA INFO GIACENZA*\n\nArt: ${art}\nDesc: ${desc}\nMisura: *${lung} x ${pz} PZ*\nSede: ${sede}\n\nAgente: ${currentUser.nome} ${currentUser.cognome}`);
             window.open(`https://wa.me/${num}?text=${msg}`, '_blank');
         }
+        // Registrazione del Service Worker per gestire cache e aggiornamenti
+    if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js?v=2.0') // <--- Cambia v= ogni volta che vuoi forzare l'aggiornamento
+            .then(reg => {
+                console.log('Service Worker registrato con successo', reg);
+                
+                // Controlla se c'è un aggiornamento pronto
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // Nuovo contenuto disponibile! 
+                                // Avvisa l'utente o ricarica semplicemente
+                                console.log('Nuovo aggiornamento disponibile, ricarico...');
+                                window.location.reload();
+                            }
+                        }
+                    };
+                };
+            })
+            .catch(err => console.log('Errore registrazione Service Worker', err));
+    });
+}
     </script>
 </body>
 </html>
